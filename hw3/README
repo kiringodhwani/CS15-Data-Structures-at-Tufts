@@ -1,0 +1,408 @@
+/**********************************************************
+* HW3 Binary Search Trees
+* Cs15
+* README
+* By Kirin Godhwani, 11/9/21
+*********************************************************/
+
+                     ---- B. PROGRAM PURPOSE ----
+                       
+The purpose of this program is to implement a binary search tree (BST) that
+supports a multiset (also known as a bag), which is a set that can contain
+duplicate values. The BST stores integer keys and tracks how many times each
+key has been inserted into the BST (a key that has not been inserted appears
+0 times). Because this class handles multiplicity, if you insert a number
+twice and then remove it once, it will still be in the data structure.
+                       
+                     ---- C. Acknowledgements ----
+                      
+While implementing the BinarySearchTree class, I referenced the "Binary Search
+Trees (BSTs)" lecture slides, the "Binary Trees and their Traversals" lecture
+slides, and the int_tree_example.cpp file we went over in lecture. I also
+received help during office hours on 11/14 from Brendan.
+
+                          ---- D. FILES ----
+BinarySearchTree.cpp
+     This file is the implementation of the Binary Search Tree class. It
+     includes the implementations of the key functions regarding the data
+     structure such as the default constructor, the destructor and its
+     recursive (private) helper called post_order_delete, the insert and
+     remove functions and their recursive (private) helpers, a contains
+     function which also has a recursive (private) helper, and many other 
+     functions and recursive helpers.
+
+BinarySearchTree.h
+     This file is the interface of the Binary Search Tree class. In the
+     file, public and private member functions of the class are declared
+     such as insert and remove and their corresponding recursive (private) 
+     helpers, the private root pointer is declared, and the private Node
+     struct is declared. 
+
+unit_tests.h
+     This file is a unit testing file for the Binary Search Tree class. It
+     runs in conjunction with the unit_test framework to allow for the
+     testing of the individual member functions in the Binary Search Tree
+     class.
+
+hw3.cpp
+     The provided driver for the program. Performs a series of function calls
+     to test the member functions of the Binary Search Tree class. Used with
+     diff to compare the output of the reference implementation with the
+     output of my own implementation.
+
+Makefile
+     The Makefile to compile the program, add the rule for unit test, include
+     a clean command, and also allow for quick submission of all of the
+     necessary files.
+
+README
+     This file.
+              
+                ---- E. COMPILE / RUN INSTRUCTIONS ----
+                 
+Simply type "unit_test" to run the unit tests for the Binary Search Tree class.
+The tests test all of the different member functions of this class.
+
+To run the Binary Search Tree class with the provided driver, type "make hw3"
+to compile, and then type ./hw3 to run the driver.
+
+                     ---- F. DATA STRUCTURES ----
+
+In the Binary Search Tree class, we implemented a binary search tree (BST) that
+supports a multiset (also known as a bag), which is a set that can contain
+duplicate values. The BST stores integer keys and tracks how many times each
+key has been inserted into the BST (a key that has not been inserted appears
+0 times). Because this class handles multiplicity, if you insert a number
+twice and then remove it once, it will still be in the data structure. The
+Binary Search Tree class behaves just like a standard BST; the only difference
+is that it is able to handle this multiplicity. Because it still behaves like
+the standard BST, the Binary Search Tree class has the regular BST invariant.
+To explain this invariant: For a given node n with key k in an instance of the
+Binary Search Tree class:
+‣ All nodes with keys less than k are in n’s left subtree
+‣ All nodes with keys greater than k are in n’s right subtree
+This invariant allows users to more efficiently search for and access data
+in the data structure. To give an example, say we have bushy/well-behaved
+instance of the Binary Search Tree class and we are using a contains function.
+First, we will compare the value we are searching for with contains to the
+root of the tree. If the value is greater than the value of the root, then
+we go to the right subtree. If the value is less than the value of the root,
+then we go to the left subtree. As a result, every comparison/step in the
+tree, cuts the search space in half. So, the time complexity of a function
+like contains becomes O(log n) with the BST invariant and a well-behaved tree.
+As a comparison, if the tree was unsorted and did not have the BST invariant,
+we would have to check every single Node in the tree when using contains. As a
+result, the time complexity becomes O(n). This shows how the BST invariant
+makes searching for data far more efficient. The bump up in efficiency can be
+seen in the time complexities of some of the Binary Search Tree class's member
+functions such as contains, remove, find_min, and find_max.
+
+
+                    ---- ADDITIONAL QUESTIONS ----
+
+1. Review the remove function explanation in the homework specification. 
+Will your implementation of the remove function use (the privately defined) 
+find_min() or find_max()? Why?
+
+My implementation of the remove function will use (the privately defined)
+find_min(). This is because the homework specification specifically says to
+mirror the reference and use the smallest value in the right subtree to replace
+a removed Node that has two children. Thus, I will need find_min to determine
+the smallest value in the right subtree.
+
+2. Is it possible for (the privately defined) find_min() or find_max() to
+return a value that does not point to a valid node? Why or why not?
+
+Yes, it is possible. The privately defined find_min() function takes in a
+Node as a parameter. If the Node that it is invoked on is equal to nullptr
+(meaning the tree is empty), then find_min() will return a value that does not
+point to a valid node. This is because it can't return a valid node when it is
+called on an empty tree with no nodes. However, this case is covered by the
+public find_min() function which returns INT_MAX and does not call the
+privately defined find_min() when it is called on an empty tree.
+
+3. 
+a. If you answered yes to 2, then what value is returned? In what
+case will that value be returned?
+
+The implementation of the public find_min function (which was given to us),
+returns INT_MAX and does not call the privately defined find_min when the tree
+is empty. Thus, the public find_min() function always catches the 
+case that the tree is empty and returns INT_MAX as a result. For this reason,
+the privately defined find_min is never called on an empty tree so it never
+actually has to address this case.
+
+
+4. Write pseudocode for your private find_min() function.
+
+BinarySearchTree::Node *BinarySearchTree::find_min(Node *node) const
+
+    if (the left child of the current node is empty):
+        return the current node
+        
+    else:
+        return the recursive call of find_min on the current node's left child
+
+
+5. Write pseudocode for your private find_max() function.
+
+BinarySearchTree::Node *BinarySearchTree::find_max(Node *node) const
+    
+    if (the right child of the current node is empty):
+        return the current node
+        
+    else:
+        return the recursive call of find_max on the current node's right child
+
+
+6. Write pseudocode for your private post_order_delete() function
+
+void BinarySearchTree::post_order_delete(Node *node)
+
+    if (the current node is empty):
+        return
+    
+    else:
+        recursively call post_order_delete on the current node's left child
+        recursively call post_order_delete on the current node's right child
+        delete the current node
+
+
+                          ---- G. TESTING ----
+      
+I extensively tested the Binary Search Tree class using the unit_test
+framework. I wrote the functions of the Binary Search Tree class 1 by 1, and
+then wrote tests in unit_tests.h using assert() and the provided print_tree
+function. I implemented each member function of the class in the order
+displayed below. In the below sections for each member function, I included
+the names of their corresponding tests in unit_tests.h as well as a 
+description of what I tested it for (i.e. what edge cases or functionalities
+I tested). Above each function in the unit_tests.h file, there is also a
+description about the purpose of each test.
+
+
+Default constructor: 
+     default_constructor_test
+     
+     The first function I wrote was the default constructor. I tested it by
+     simply creating an instance of BinarySearchTree to make sure there are no
+     runtime errors or memory leaks. The name of this test can be seen above. 
+     This test passed.
+
+tree_height: 
+     tree_height_empty, tree_height_root, tree_height_duplicate,
+     tree_height_bulk,
+     
+     Next, I implemented the tree_height function. I decided to implement this
+     function next because I knew it was required for the print_tree function
+     to work. To test the tree_height function, I implemented the insert
+     function. The tests for insert can be seen in the next paragraph. To test
+     tree_height, I used insert() and assert(). I created four separate
+     tests, one to test tree_height on an empty BST, one to test tree_height
+     on a tree with just a root with no duplicates, one to test tree_height on
+     a tree with a single Node that has a duplicate, and one to test
+     tree_height on a growing tree of many Nodes and duplicates. The names of
+     these tests can be seen above. These tests passed. Because these tests
+     utilized the insert() function, they also helped me test the insert()
+     function pretty thoroughly. Still, I created separate tests for insert().
+
+Insert: 
+     insert_single, insert_duplicate, insert_large
+     
+     After implementing the insert function to test tree_height, I created
+     separate tests to test the insert function. To maximize the effectiveness
+     of these tests, I decided to implement the node_count function. The
+     tests I wrote use assert(), node_count(), tree_height(), and print_tree()
+     to test insert. I created three tests: insert_single, insert_duplicate,
+     and insert_large. The first of these three tests tests a single insert,
+     the second tests inserting a duplicate, and the third tests various
+     insertions of duplicates and non-duplicates. The names of these tests can
+     be seen above. These tests passed.
+
+Node_count: 
+     Node_count_empty, Node_count_root, Node_count_duplicate, 
+     Node_count_bulk
+
+     I tested Node_count pretty thoroughly while testing insert. Still, I
+     decided to test it individually on general cases as well as and on a few
+     edge cases. I created four tests: one to test Node_count on an empty BST,
+     one to test Node_count on a BST with just a root and no duplicates, one to
+     test Node_count on a BST with a single Node that has a duplicate, and one
+     to test Node_count on a growing tree with multiple Nodes and duplicates.
+     The names of these tests can be seen above. These tests passed.
+
+count_total:
+     count_total_empty, count_total_root, count_total_duplicate, 
+     count_total_bulk
+     
+     I next tested count_total in a very similar way to how I tested
+     node_count. I created 4 tests. The names of these tests can be seen above.
+     The first test tests count_total on an empty BST. The second tests
+     count_total on a BST of just one Node with no duplicates. The third tests
+     count_total on two BSTs: one with a single Node with one duplicate and
+     one with a single Node with many duplicates. The fourth test tests
+     count_total on a growing BST of many Nodes and duplicates. These tests
+     passed.
+     
+contains:
+     contains_empty, contains_root, contains_duplicate, contains_bulk
+     
+     The next function I wrote was the contains function. To test this
+     function, I wrote 4 different tests to test different cases. The names of
+     these tests can be seen above. The first test tests contains on an empty
+     tree. The second test tests contains on a tree of a single Node with no
+     duplicates. The third test tests contains on a tree with a single Node
+     with a single duplicate. The last test tests contains on a large growing
+     tree of many Nodes and duplicates. These tests passed.
+
+find_min:
+     find_min_empty, find_min_root, find_min_duplicate, find_min_bulk
+     
+     Next, I implemented find_min. I created four tests to test find_min.
+     The names of these tests can be seen above. The first test tests find_min
+     on an empty BST. The second tests find_min on a BST with a single Node
+     of no duplicates. The third tests find_min on a BST with a single Node
+     that has a duplicate. The fourth tests find_min on a growing BST of
+     many Nodes and duplicates. The tests passed.
+
+find_max:
+     find_max_empty, find_max_root, find_max_duplicate, find_max_bulk
+          
+     Next, I implemented find_max. I tested find_max pretty much the same way
+     I tested find_min. I created four tests. The names of these tests can be
+     seen above. The first test tests find_max on an empty BST. The second
+     tests find_max on a BST with a single Node of no duplicates. The third
+     tests find_max on a BST with a single Node that has a duplicate. The
+     fourth tests find_max on a growing BST of many Nodes and duplicates. The
+     tests passed.
+
+copy constructor:
+     copy_empty, copy_root, copy_duplicate, copy_bulk
+     
+     Next, I implemented the copy constructor and pre_order_copy. To test 
+     the copy constructor, I created four tests. The first test uses the
+     copy constructor to copy an empty BST. The second test uses the copy
+     constructor to copy a BST with a single Node with no duplicates. The third
+     test uses the copy constructor to copy a BST with a single Node with a
+     duplicate. The fourth test uses the copy constructor to copy a BST of
+     many Nodes and duplicates. These tests passed.
+
+assignment operator:
+     Testing self assignment: assignment_nullptr_to_nullptr(), 
+     assignment_one_to_one(), assignment_dup_to_dup(),
+     assignment_manysame_to_manysame()
+     
+     Testing an empty tree assigned to a non-empty tree:
+     assignment_nullptr_to_one(), assignment_nullptr_to_many()
+     
+     Testing a non-empty tree assigned to an empty tree:
+     assignment_one_to_nullptr(), assignment_many_to_nullptr()
+     
+     Testing a non-empty tree assigned to another non-empty tree:
+     assignment_many_to_one(), assignment_manydiff_to_manydiff(),
+     assignment_same_root()
+
+     After implementing the assignment operator, I created various tests to
+     test it on different conditions. The first tests I created were made to
+     test the self-assignment condition of the assignment operator.
+     The next set of tests I created test the assignment operator when the
+     current tree is equal to nullptr and the tree it is being assigned to is
+     non-empty. The next test I created tests the assignment operator when the
+     current tree is non-empty and the other tree is empty. The last set of
+     tests I created test the condition when both trees are non-empty and
+     different from each other. The names of the tests and their corresponding
+     categories can be seen above. The tests passed.
+     
+remove:
+     After creating remove, I realized that there were a ton of edge cases to
+     test. As a result, I made various tests. The tests and there purpose can
+     be seen below:
+     
+     FALSE OUTPUTS:
+     -remove_empty: Testing remove on an empty BST.
+     -remove_node_not_in_tree: Testing remove when the value it is given is not
+                              in the BST.
+                              
+     REMOVAL FROM A TREE WITH JUST A ROOT AND 0-2 OF ITS CHILDREN:
+     -remove_single_node: Uses remove to remove the single Node in a tree with
+                          one Node.
+     -remove_two_nodes: Uses remove to remove the child of the root in a tree
+                        of two Nodes.
+     -remove_two_nodes_both: Uses remove to remove both children of the root
+                             in a tree of a root and two children.
+     -remove_parent_of_one: In a tree of two Nodes (root and child), remove
+                            the root.
+     -remove_parent_of_two: In a tree of three Nodes(root with two children),
+                            remove the root.
+     -remove_dup: Uses remove to remove a Node with a count greater than 1.
+     
+     REMOVAL FROM A TREE WITH A ROOT WITH 2 KIDS AND BOTH KIDS HAVE 2 KIDS,
+     HEIGHT = 2
+     -leaf_deletion: Removal of a leaf. Tests the leaf condition of remove.
+     -internal_node_deletion: Removal of the internal Nodes. Tests the 2
+                              child condiiton of remove.
+     -root_deletion: Remove the root of the BST. Tests the 2 child condition
+                     of remove.
+      
+     REMOVAL FROM A HEIGHT 2 TREE WHERE THE CHILDREN OF THE ROOT EACH ONLY
+     HAVE ONE CHILD
+     -node_has_one_child: Testing the case when the Node to be removed has
+                          one child.
+     
+     BULK TEST: 
+     -remove_bulk: Testing all cases. Creating a large BST of many Nodes and
+                   duplicates and using remove on different values in the
+                   BST.
+     
+     SPECIAL CASE:
+     -two_children_dup: I noticed while bulk testing that my program failed
+                      when deleting a Node with 2 children where the
+                      replacement had a count of more than 1. This test is made
+                      specifically to test this case.
+
+     All of these tests passed.
+
+Destructor: 
+     To test my destructor, I commented out the code within my destructor and
+     ran all of my unit tests. The result was that almost all of my tests
+     failed valgrind. The only tests that passed were my default constructor
+     test and the tests that tested empty BSTs. When I uncommented out all of 
+     the code in my destructor, all of the tests passed valgrind. This showed
+     me that my destructor was functioning correctly.
+                            
+Overall all of my unit tests passed:
+
+== test summary ==
+number of tests passed: 57
+number of tests failed: 0
+number of valgrind tests passed: 57
+number of valgrind tests failed: 0
+
+Lastly, I tested my program using the provided driver to compare my program
+with the reference implementation. To do this, I ran the following lines in
+terminal:
+
+vm-hw08{kgodhw01}251: make hw3
+clang++ -g3 -Wall -Wextra -std=c++11  -c hw3.cpp
+clang++ -o hw3 hw3.o BinarySearchTree.o
+vm-hw08{kgodhw01}252: bash
+bash-4.2$ ./hw3 &> stdout.txt
+bash-4.2$ ./the_hw3 &> demostdout.txt
+bash-4.2$ diff stdout.txt demostdout.txt
+bash-4.2$ 
+
+As you can see, no differences were returned so my program was performing
+exactly the same as the reference implementation.
+
+     
+Time Spent:
+11/7: 3.5 hours
+11/9: 2.5 hours
+11/10: 3.5 hours
+11/11: 2 hours
+11/12: 1 hour
+11/13: 6 hours
+11/14: 3 hours
+
+
+      
