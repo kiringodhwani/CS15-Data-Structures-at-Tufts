@@ -1,5 +1,5 @@
 # CS15
-Projects from CS15: Data Structures at Tufts University. 
+Projects from CS15: Data Structures at Tufts University. All projects in C++.
 
 Projects include: 
 - HW1: This program offers two different lists that store characters (a linked list and an array list). They maintain the stored characters in their given order, with some extra features, such as the ability to concatenate lists. See CharArrayList.h and CharLinkedList.h to view the functions included in each the array list implementation and linked list implementation respectively.
