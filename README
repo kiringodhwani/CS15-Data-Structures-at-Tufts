@@ -1,0 +1,789 @@
+/**********************************************************
+* 1. Project Two: Six Degrees of Collaboration
+* Cs15
+* README
+* 2. By Kirin Godhwani, 12/2/21
+*********************************************************/
+
+            ---- 3. HOW MUCH TIME ASSIGNMENT TOOK IN HOURS ----
+11/29: 1 hour
+11/30: 3 hours
+12/1: 3 hours
+12/3: 5 hours
+12/6: 3 hours
+12/7: 5 hours
+12/8: 5 hours
+12/9: 3 hours
+12/11: 1 hour
+
+29 hours total
+
+
+
+                     ---- 4. PROGRAM PURPOSE ----
+                       
+The purpose of this program is to simulate the game Six Degrees of Kevin
+Bacon; however, instead of actors, the program uses musical artists and songs
+they have collaborated on with other artists. The program interactively
+accepts queries in the form of an input command and the names of artists. It
+then outputs a path to get from the first artist to the second via musical
+collaborations (with some restrictions depending on the input command).
+                       
+                     ---- 5. Acknowledgements ----
+                      
+While using the standard unordered map library, I used the following online
+reference: https://www.cplusplus.com/reference/unordered_map/unordered_map/ 
+
+While using the standard stack libary, I used the following online reference:
+https://www.cplusplus.com/reference/stack/stack/
+
+While using the standard vector library, I used the following online
+reference: https://www.cplusplus.com/reference/vector/vector/ 
+
+I also received help during many office hours from TAs such as Niall, Jason,
+and Peppa on the days 11/30, 12/1, 12/7, 12/8, and 12/9.
+
+On 12/7, the TA CR_Calabrese showed me how to create a bash script to automate
+my diff testing.
+
+I also received help from the class lecture slides. Specifically, I referenced
+the pseudocode on the lecture slides for performing breadth first search and
+performing a depth first search.
+
+                          ---- 6. FILES ----
+
+SixDegrees.h
+     This file is the interface of the SixDegrees class. The SixDegrees class
+     has the following functionalities: populates the CollabGraph and runs
+     a command loop to execute a sequence of commands and output the results.
+     The commands the SixDegrees class supports are printing the graph,
+     performing a breadth first search between two Artists to find the
+     shortest path between them, performing a depth first search between two
+     Artists to find a path between them, performing an exclusive
+     search between two Artists to find the shortest path between them that
+     excludes certain user-inputted Artists, and quitting the program.
+
+SixDegrees.cpp
+     This file is the implementation of the SixDegrees class. This file
+     includes the implementations of the key functions regarding the
+     functionalities of the SixDegrees class. These include the function
+     to populate the Collabgraph, the function to run the command loop to
+     respond to sequences of commands and correctly output the results,
+     the functions to perform a breadth first search, the functions to perform
+     a depth first search, and the functions to perform an exclusive search.
+
+CollabGraph.h
+     This file is the interface of the CollabGraph class. The class represents
+     a collaboration graph of artists, where each artist is a vertex and an
+     edge between two artists is a song in which those artists have
+     collaborated. The class provide various accessor and mutator functions,
+     allowing for convenient traversal of the graph.
+
+CollabGraph.cpp
+     This file is the implementation of the CollabGraph class. In this file,
+     the various accessor and mutator functions are implemented that allow for
+     convenient traversal of the graph.
+
+Artist.h
+     This file is the interface of the Artist class. This class represents
+     an artist (musician), storing their name and discography. The class
+     provides various accessor and mutator functions, and various ways to
+     compare any two artists.
+
+Artist.cpp
+     This file is the implementation of the Artist class. It includes
+     the implementations of the key functions in the class including
+     the implementations of all of the various accessor and mutator functions.
+
+Artists.txt
+     A provided data file that contains a list of Artists and their
+     respective discographies. Used for testing on a large sample of
+     Artists. 
+
+main.cpp
+     Handles command line arguments and communicates with the SixDegrees
+     class to respond to the different command line arguments. Implements
+     all behavior specified in the Input and Output Behavior section of
+     the spec.
+
+run_tests.txt
+     A bash script to automate diff testing. Runs diff tests to compare my
+     SixDegrees class's handling of the bfs, dfs, not, print, and quit
+     commands with the reference implementation. Split into different sections
+     with added comments with # to show what each diff section is testing.
+
+README
+     This file.
+
+Makefile
+     The Makefile that builds the program with make SixDegrees, produces an
+     executable named SixDegrees which can be run by typing ./SixDegrees, 
+     adds the rule for unit test, includes a clean command, and allows for
+     quick submission of all of the necessary files.
+
+unit_test.h
+     This file is a unit testing file to test report_path and
+     get_vertex_neighbors (two member functions of the CollabGraph class).
+     The file runs in conjunction with the unit_test framework to allow for
+     the testing of these member functions on various edge cases.
+
+demooutput.txt
+     An output file specifically for the reference. Used for diffing my
+     program with the reference.
+
+output.txt
+     An output file specifically for my program. Used for diffing my
+     program with the reference.
+
+empty.txt
+     An empty artist data file. Used for testing this edge case.
+
+nodisc.txt
+     An artist data file of many artists with no dicographies. Used to test
+     this edge case.
+
+oneartist.txt
+     An artist data file with only one artist and their discography. Used to
+     test this edge case.
+
+print.txt
+     A command file that contains only one command: print.
+
+printquit.txt
+     A command file that contains two commands: print and quit.
+
+smallartist.txt
+     A small artist file of only 19 artists and their respective
+     discographies. Results in a graph that is very easy to draw out by hand
+     so one can see all paths between artists. Helpful for testing to confirm
+     specific paths between artists.
+
+cmdbfssmallartist.txt, cmddfssmallartist.txt, cmdnotsmallartist.txt
+     Three command files for bfs, dfs, and not, respectively. Used to test
+     bfs, dfs, and not with the smallartist.txt artist file, which is a
+     small data file of artists with only 19 artists and their respective
+     discographies. These command files are split up by line number for
+     which edge cases they are testing. For the line number sections see
+     the testing section of this README.
+
+cmdbfsempty.txt, cmddfsempty.txt, cmdnotempty.txt
+     Three command files for bfs, dfs, and not, respectively. Used to test
+     bfs, dfs, and not with the empty.txt artist file, which is an empty
+     artist data file of no artists and no discographies.
+
+cmdbfsnodisc.txt, cmddfsnodisc.txt, cmdnotnodisc.txt
+     Three command files for bfs, dfs, and not, respectively. Used to test
+     bfs, dfs, and not with the nodisc.txt artist file, which is an artist
+     data file of many artists with no discographies.
+
+cmdbfsoneartist.txt, cmddfsoneartist.txt, cmdnotoneartist.txt
+     Three command files for bfs, dfs, and not, respectively. Used to test
+     bfs, dfs, and not with the oneartist.txt artist file, which is an artist
+     data file that only has one artist and their respective discography.
+
+
+
+
+                ---- 7. COMPILE / RUN INSTRUCTIONS ----
+                 
+Simply type "unit_test" to run the unit tests for report_path and
+get_vertex_neighbors (two member functions of the CollabGraph class).
+The unit tests test these two functions on various edge cases.
+
+To run the diff tests to compare my SixDegrees class's handling of the
+bfs, dfs, not, print, and quit commands with the reference implementation,
+type ./run_tests.txt.
+
+To build the program, run make SixDegrees. This will produce an executable
+named SixDegrees which can be run by typing ./SixDegrees.
+
+
+                     ---- 8. DATA STRUCTURES ----
+
+Graphs:
+In this project, the main data structure that is used is a graph. Graphs are
+a linked data structure made up of a set of vertices (also called nodes) and
+a set of edges between vertices (also called arcs). Unlike linked lists or
+trees which are other types of linked data structures, edges in a graph can
+occur between any two nodes. In graphs, their is no imposed structure
+(e.g. roots and children in trees), cycles are allowed, vertices can point
+to themselves, and some vertices may not be connected to any others. To sum
+these characteristics up, a graph is a set of vertices and edges, where
+edges are allowed to connect any two vertices. In general, graphs serve many
+real-life purposes. They are used to model social networks as well as websites
+and links. In this assignment, we used a graph to model a collection of
+artists where the vertices of the graph are represented by the artists and
+their respective discographies and the edges of the graph are represented by
+the songs on which artists have collaborated. Graphs can be undirected
+or directed. In a directed graph, all edges have a direction associated with
+them. In an undirected graph, edges have no direction, meaning they simply
+represent connections between nodes. In this assignment, we used an undirected
+graph, because if two artists have collaborated together on a song, the
+relationship goes both ways (e.g. if Ariana Grande and Jessie J made a song
+together, Ariana Grande has collaborated with Jessie J and Jessie J has
+collaborated with Ariana Grande, the collaboration goes both ways). Thus, in
+the case of this assignment, it makes more sense for edges to simply represent
+connections between artists. Graphs can also be weighted or unweighted. In a
+weighted graph, each edge has an associated value or weight. In an unweighted
+graph, edges do not have an associated value. In this assignment, we used an
+unweighted graph because the edges in the graph do not have numeric weights 
+associated with them. However, the edges do have labels associated with them
+represented by the song name upon which the two artists collaborated. Thus,
+the graph is labeled. Overall, the CollabGraph class represents an undirected,
+unweighted, labeled graph. In general, there are two common ways for
+representing a graph: adjacency matrices and adjacency lists. Adjacency
+matrices and adjacency lists differ in how they represent edges. An adjacency
+matrix is a matrix of size |V| x |V| (where |V| is the number of vertices).
+Each entry (i, j) in the matrix represents an edge (or lack thereof). For an
+adjacency matrix to work, each vertex must be given an associated number (e.g.
+if the graph's vertices are stored in a vector, the associated numbers could
+be the vector indices). In an adjacency list, for each vertex in the graph,
+the program maintains a collection of vertices that are adjacent to it. To do
+this, a list data structure such as an array list or linked list is used. The
+space complexity of an adjacency matrix is O(|V|^2) and the space complexity
+of an adjacency list is O(|V| + |E|). In this assignment, the CollabGraph
+class's implementation of the graph uses an adjacency list where the neighbors
+of each artist are stored in their own neighbors vector. This means that
+the CollabGraph class's graph implementation has space complexity
+O(|V| + |E|).
+
+BFS and DFS:
+The two main algorithms used in this assignment are the traversal algorithms
+BFS and DFS. BFS is used with the bfs command to find the shortest path
+between two artists in the graph. BFS is also used with the not command to
+find the shortest path between two artists in the graph while excluding
+certain artists. DFS is used with the dfs command to find any path between two
+artists in the graph. Generally, BFS is used to find shortest paths in a
+graph. When you perform a complete BFS on a graph, you find the shortest path
+from the start node to all other nodes in the graph. DFS, on the other hand,
+is not used to find shortest paths and instead finds a path from a start node
+to the other nodes in the graph. DFS is generally useful when
+searching for paths deep in the graph. In terms of how they work, BFS visits
+all nodes at distance 0, then distance 1, then distance 2, etc. DFS instead
+moves as deep into the graph as possible, then backtracks and explores new
+paths. Time complexity wise, both BFS and DFS have time complexity
+O(|V| + |E|) when using an adjacency list and time complexity O(|V|^2) when
+using an adjacency matrix. In this assignment, the graph implementation
+is akin to an adjacency list so BFS and DFS have runtime O(|V| + |E|).
+For more information on time complexity and the differences between BFS
+and DFS and the pros and cons of each, see the additional questions section
+of this README.
+
+
+                          ---- G. TESTING ----
+
+                                  PHASE 1
+
+report_path:
+     The first function I tested was the report_path function in the
+     CollabGraph class. To test this function, I used the unit test
+     framework. In the tests, I manually created different CollabGraph
+     instances using the provided Artist constructor and the provided
+     CollabGraph mutator functions (specifically, I used insert_vertex,
+     insert_edge, and set_predecessor). To create the instances,
+     I first defined different instances of the Artist class to represent
+     different artists. Then, I created vertices in the graph for each
+     artist using insert_vertex. Then, I created edges between the
+     vertices using insert_edge, and defined a path between the edges
+     using set_predecessor. Lastly, I ran report_path on a source
+     vertex in the graph and a destination vertex in the path. I created
+     7 tests total to test report_path. The names of these seven are listed
+     below along with the edge case they are meant to test.
+
+     report_path_2_vertices
+     Tests report_path on two vertices in a 2-vertex graph that have a
+     valid path between them. The source vertex is one of the two vertices and
+     the destination vertex is the other. report_path should return a
+     2-element stack with the source vertex being the top-most Artist on the
+     stack and the destination vertex being the bottom-most Artist.
+
+     report_path_2_vertices_invalid
+     Tests report_path on two vertices in a 2-vertex graph that do not have a
+     valid path between them. report_path should return an empty stack.
+
+     report_path_12_vertices
+     Tests report_path on two vertices in a 12-vertex graph that have a valid
+     path between them. Should return a non-empty stack.
+
+     report_path_12_vertices_invalid
+     Tests report_path on two vertices in a 12-vertex graph that do not have a
+     valid path between them. Should return an empty stack.
+
+     report_path_dest_equals_source
+     Tests report_path with the edge case where the source vertex it is given
+     is the same same as the destination vertex it is given. The result is
+     that report_path should return an empty stack.
+
+     report_path_one_vertex
+     Tests report_path on a one-vertex graph where the source vertex it is
+     given is the lone vertex and the destination vertex it is given is also
+     the lone vertex. report_path should return an empty stack.
+
+     report_path_12_vertices_diff
+     Testing report_path on two vertices in a 12-vertex graph with a different
+     predecessor-defined path than the earler 12-vertex test. report_path
+     should return a different non-empty stack than the earlier test.
+
+     All of these tests passed.
+
+
+get_vertex_neighbors
+     I tested the get_vertex_neighbors function of the CollabGraph class
+     with the unit test framework. In a similar way to how I tested
+     report_path, I manually created different instances of CollabGraph
+     and then tested get_vertex neighbors on the different instances.
+     Below are the tests I created and the edge cases they are meant to
+     test with get_vertex_neighbors:
+
+     neighbors_lone
+     Tests get_vertex_neighbors on the lone vertex in a one-vertex graph.
+     Should return an empty vector.
+
+     neighbors_no_neighbors
+     Tests get_vertex_neighbors on a vertex in a 14-vertex graph that has
+     no neighbors. Should return an empty vector.
+
+     neighbors_one_neighbor
+     Tests get_vertex_neighbors on three vertices in a 14-vertex graph that
+     all only have one neighbor. get_vertex_neighbors should return vectors of
+     size 1 for each of the three vertices that contain their lone neighbor.
+
+     neighbors_many_neighbors
+     Tests get_vertex_neighbors on different vertices in a 14-vertex graph
+     that all have multiple neighbors. get_vertex_neighbors should return
+     vectors of sizes > 1 for all of the vertices that contain their
+     neighbors.
+
+     All of these tests passed.
+
+Next, I implemented main.cpp and compared my program to the reference manually
+to make sure my programs input and output behavior was correct. I first 
+tested the usage error like this:
+
+vm-hw03{kgodhw01}131: ./SixDegrees
+Usage: SixDegrees dataFile [commandFile] [outputFile]
+vm-hw03{kgodhw01}132: ./the_SixDegrees
+Usage: SixDegrees dataFile [commandFile] [outputFile]
+vm-hw03{kgodhw01}141: ./SixDegrees artists.txt printquit.txt output.txt 
+invalid
+Usage: SixDegrees dataFile [commandFile] [outputFile]
+vm-hw03{kgodhw01}142: ./the_SixDegrees artists.txt printquit.txt output.txt 
+invalid
+Usage: SixDegrees dataFile [commandFile] [outputFile]
+
+Next, I tested with files that can't be opened:
+vm-hw03{kgodhw01}185: ./SixDegrees artist
+artist cannot be opened.
+vm-hw03{kgodhw01}186: ./the_SixDegrees artist
+artist cannot be opened.
+vm-hw03{kgodhw01}187: 
+vm-hw03{kgodhw01}181: ./SixDegrees artist command
+command cannot be opened.
+vm-hw03{kgodhw01}182: ./the_SixDegrees artist command
+command cannot be opened.
+vm-hw03{kgodhw01}183: 
+vm-hw03{kgodhw01}177: ./SixDegrees artist command output
+command cannot be opened.
+vm-hw03{kgodhw01}178: ./the_SixDegrees artist command output
+command cannot be opened.
+vm-hw03{kgodhw01}179: 
+vm-hw03{kgodhw01}174: ./SixDegrees artists.txt command
+command cannot be opened.
+vm-hw03{kgodhw01}175: ./the_SixDegrees artists.txt command
+command cannot be opened.
+vm-hw03{kgodhw01}176: 
+vm-hw03{kgodhw01}187: ./SixDegrees artists.txt command output
+command cannot be opened.
+vm-hw03{kgodhw01}188: ./the_SixDegrees artists.txt command output
+command cannot be opened.
+vm-hw03{kgodhw01}189: 
+vm-hw03{kgodhw01}195: ./SixDegrees artist printquit.txt
+artist cannot be opened.
+vm-hw03{kgodhw01}196: ./the_SixDegrees artist printquit.txt
+artist cannot be opened.
+vm-hw03{kgodhw01}197: 
+vm-hw03{kgodhw01}197: ./SixDegrees artist printquit.txt output
+artist cannot be opened.
+vm-hw03{kgodhw01}198: ./the_SixDegrees artist printquit.txt output
+artist cannot be opened.
+vm-hw03{kgodhw01}199: 
+
+
+Next, I began testing with correct numbers of command files and files that
+can be opened. These tests tested with the print and quit commands and also
+tested the populate_graph function in CollabGraph because they use
+populate_graph to build CollabGraph instances from the data files of 
+Artists. First I tested the 1 command line argument case and diffed my
+program's output with that of the reference. artists.txt is the provided
+artists data file, printquit.txt is a command file that contains one
+print command and one quit command, and output.txt is an output file.
+
+vm-hw03{kgodhw01}215: ./SixDegrees artists.txt < printquit.txt > output.txt
+vm-hw03{kgodhw01}216: ./the_SixDegrees artists.txt < printquit.txt 
+> demooutput.txt
+vm-hw03{kgodhw01}217: diff output.txt demooutput.txt
+vm-hw03{kgodhw01}218: 
+
+As you can see, no differences were returned. Next I tested with the 2
+command line argument case. 
+
+vm-hw05{kgodhw01}121: ./SixDegrees artists.txt printquit.txt > output.txt
+vm-hw05{kgodhw01}122: ./the_SixDegrees artists.txt printquit.txt > 
+demooutput.txt
+vm-hw05{kgodhw01}123: diff output.txt demooutput.txt
+vm-hw05{kgodhw01}124:
+
+As you can see, no differences were returned. Lastly, I tested with the
+3 command line argument case.
+
+vm-hw05{kgodhw01}114: ./SixDegrees artists.txt printquit.txt output.txt
+vm-hw05{kgodhw01}115: ./the_SixDegrees artists.txt printquit.txt 
+demooutput.txt
+vm-hw05{kgodhw01}116: diff output.txt demooutput.txt
+vm-hw05{kgodhw01}117: 
+
+Once again, no differences were returned. Next, I tested with a commands
+file that did not include a quit command (it only includes a print command)
+(print.txt).
+
+vm-hw05{kgodhw01}156: ./SixDegrees artists.txt print.txt output.txt
+vm-hw05{kgodhw01}157: ./the_SixDegrees artists.txt print.txt demooutput.txt
+vm-hw05{kgodhw01}158: diff output.txt demooutput.txt
+vm-hw05{kgodhw01}159:
+
+Once again, no differences were returned. Next, I tested with an empty
+artists data file (empty.txt).
+
+vm-hw05{kgodhw01}159: ./SixDegrees empty.txt printquit.txt output.txt
+vm-hw05{kgodhw01}160: ./the_SixDegrees empty.txt printquit.txt demooutput.txt
+vm-hw05{kgodhw01}161: diff output.txt demooutput.txt
+vm-hw05{kgodhw01}162: 
+
+Once again, no differences were returned. Next, I tested with an artists
+data file that has only one artist (oneartist.txt).
+
+vm-hw05{kgodhw01}169: ./SixDegrees oneartist.txt printquit.txt output.txt
+vm-hw05{kgodhw01}170: ./the_SixDegrees oneartist.txt printquit.txt 
+demooutput.txt
+vm-hw05{kgodhw01}171: diff output.txt demooutput.txt
+vm-hw05{kgodhw01}172:
+
+Once again, no differences were returned. Lastly, I tested with an artists 
+data file that contains many artists but no discographies (nodisc.txt).
+
+vm-hw05{kgodhw01}178: ./SixDegrees nodisc.txt print.txt output.txt
+vm-hw05{kgodhw01}179: ./the_SixDegrees nodisc.txt print.txt demooutput.txt
+vm-hw05{kgodhw01}180: diff output.txt demooutput.txt
+vm-hw05{kgodhw01}181: 
+
+As you can see, no differences were returned. From here, I was confident that
+I had thorougly tested populate_graph as well as the behavior of my main.cpp
+implementation.
+
+
+                                 PHASE 2
+
+To begin phase 2, I implemented the bfs command. To test bfs, I first
+created a small artist file where it was very easy to see paths between
+artists. This was helpful because I was able to draw out the graph by hand
+to confirm where paths between artists were located. I called this text
+file smallartist.txt. Next, I implemented a command file specifically
+for testing with smallartist.txt. This command file, called
+cmdbfssmallartist.txt, tested various edge cases with smallartist.txt.
+See the line numbers in cmdbfssmallartist.txt for these different
+edge case sections below:
+
+1. Invalid commands (lines 1-8)
+2. Artists that are not in the file (lines 10-18)
+3. Two artists that don't have a path between them (lines 19-45)
+4. Calling bfs to find a path between the same artist (i.e. artist1 = artist2)
+   (lines 46-57)
+5. Multiple shortest paths (lines 58-87)
+6. Paths of length one (lines 88-105)
+7. Paths between artists where they have collaboated on more than one song
+   together (lines 106-123)
+8. General testing, mostly paths of more than length one (many paths of
+different lengths) (lines 124-183)
+9. Inputted artist is the empty string (lines 184-198)
+10. Inputted command is the empty string (lines 199-205)
+
+After creating this command file, I diffed my programs response to it with the
+reference implementation:
+
+vm-hw09{kgodhw01}193: ./SixDegrees smallartist.txt cmdbfssmallartist.txt
+output.txt
+vm-hw09{kgodhw01}194: ./the_SixDegrees smallartist.txt cmdbfssmallartist.txt
+demooutput.txt
+vm-hw09{kgodhw01}195: diff output.txt demooutput.txt
+vm-hw09{kgodhw01}196:
+
+As you can see, diff returned no differences. Next I tested bfs on a couple
+of special artist files.
+
+1. File with only one artist and their respective discography (oneartist.txt)
+2. File with a bunch of artists all with no discography (nodisc.txt)
+3. Empty artist file (empty.txt)
+
+I created specific command files for each of these artist files so that I
+could diff with the reference implementation. Due to the nature of these
+artist files, these command files were pretty basic. For the artist file with
+no discographies, the program should not be able to find any paths in the
+graph. For the artist file with one artist, the program should always
+say that any artist other than the single artist in the graph is not in the
+data set. Lastly, for the empty artist file, no artists should be recognized
+in the data set. Here are the lines I ran in terminal to test with these artist
+files. The command file for oneartist.txt is called cmdbfsoneartist.txt, the
+command file for nodisc.txt is cmdbfsnodisc.txt, and the command file for
+empty.txt is cmdbfsempty.txt.
+
+vm-hw09{kgodhw01}203: ./SixDegrees oneartist.txt cmdbfsoneartist.txt
+output.txt
+vm-hw09{kgodhw01}204: ./the_SixDegrees oneartist.txt cmdbfsoneartist.txt
+demooutput.txt
+vm-hw09{kgodhw01}205: diff output.txt demooutput.txt
+vm-hw09{kgodhw01}206: 
+vm-hw09{kgodhw01}236: ./SixDegrees nodisc.txt cmdbfsnodisc.txt output.txt
+vm-hw09{kgodhw01}237: ./the_SixDegrees nodisc.txt cmdbfsnodisc.txt
+demooutput.txt
+vm-hw09{kgodhw01}238: diff output.txt demooutput.txt
+vm-hw09{kgodhw01}239:
+vm-hw07{kgodhw01}103: ./SixDegrees empty.txt cmdbfsempty.txt output.txt
+vm-hw07{kgodhw01}104: ./the_SixDegrees empty.txt cmdbfsempty.txt
+demooutput.txt
+vm-hw07{kgodhw01}105: diff output.txt demooutput.txt
+vm-hw07{kgodhw01}106:
+
+As you can see, no differences were returned.
+
+Next, I implemented the dfs command and tested it with the same command files
+and artist files that I used to test bfs. Of course, I replaced all bfs
+commands with dfs commands in these command files. However, other than using
+dfs instead of bfs, these command files are exactly the same (I simply used
+find and replace to replace all bfs calls with dfs ones). Thus, for the
+command file for smallartist.txt, all of the different edge case sections I
+outlined above by line number (for cmdbfssmallartist.txt) correspond to the
+exact same lines in the dfs command file for smallartist.txt. The dfs version
+of this command file is called cmddfssmallartist.txt. The three command files
+I created to test the three special artist files (empty.txt, nodisc.txt, and
+oneartist.txt) are called cmddfsempty.txt, cmddfsnodisc.txt, and
+cmddfsoneartist.txt, respectively.
+
+Realizing how many different files I would need to diff test, I decided to
+write a bash script to automate my testing. As explained in my
+acknowledgments, to write this script, I received help from the TA
+CR_Calabrese. This bash script can be seen in run_tests.txt. 
+The bash script is used run diff tests to compare my SixDegrees
+class's handling of the bfs, dfs, not, print, and quit commands with the
+reference implementation. I split this program up into different sections and
+added comments with # to show what each diff section was testing (e.g. an
+artist file of one artist, a small artist file, a large artist file, an artist
+file with no discographies). Of course, more in-depth descriptions for the
+purpose of these sections can be seen in this testing section of the README.
+For dfs, as I explained, I simply copied my testing files for bfs and replaced
+bfs command calls with dfs command calls. Like my bfs tests, all of my dfs
+tests returned no differences. Here are the lines in the bash script that
+correspond with dfs testing:
+
+#### DFS TESTING
+## Tests on smallartist.txt, a smaller artist file where the paths between
+## artists are clear and easy to see
+./SixDegrees smallartist.txt cmddfssmallartist.txt output.txt
+./the_SixDegrees smallartist.txt cmddfssmallartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on oneartist.txt, a text file that contains only one artist
+./SixDegrees oneartist.txt cmddfsoneartist.txt output.txt
+./the_SixDegrees oneartist.txt cmddfsoneartist.txt demooutput.txt
+diff output.txt demooutput.txt 
+## Tests on nodisc.txt, a text file of many artists with no discographies
+./SixDegrees nodisc.txt cmddfsnodisc.txt output.txt
+./the_SixDegrees nodisc.txt cmddfsnodisc.txt demooutput.txt
+diff output.txt demooutput.txt
+## Empty artist file, empty.txt
+./SixDegrees empty.txt cmddfsempty.txt output.txt
+./the_SixDegrees empty.txt cmddfsempty.txt demooutput.txt
+diff output.txt demooutput.txt
+
+Of course, I also added my bfs testing to the bash script. Here are the
+lines that correspond with bfs testing:
+
+#### BFS TESTING
+## Tests on smallartist.txt, a smaller artist file where the paths between
+## artists are clear and easy to see
+./SixDegrees smallartist.txt cmdbfssmallartist.txt output.txt
+./the_SixDegrees smallartist.txt cmdbfssmallartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on oneartist.txt, a text file that contains only one artist
+./SixDegrees oneartist.txt cmdbfsoneartist.txt output.txt
+./the_SixDegrees oneartist.txt cmdbfsoneartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on nodisc.txt, a text file of many artists with no discographies
+./SixDegrees nodisc.txt cmdbfsnodisc.txt output.txt
+./the_SixDegrees nodisc.txt cmdbfsnodisc.txt demooutput.txt
+diff output.txt demooutput.txt
+## Empty artist file, empty.txt
+./SixDegrees empty.txt cmdbfsempty.txt output.txt
+./the_SixDegrees empty.txt cmdbfsempty.txt demooutput.txt
+diff output.txt demooutput.txt
+
+Lastly, I implemented the not command. To test this command, I decided to use
+a similar strategy to how I tested bfs. I used the small artist data file I
+had previously created (smallartist.txt) and used to test bfs and dfs, because
+this file made it very easy to see the paths between artists. This was very
+helpful because it allowed me to draw out the graph by hand and confirm where
+paths between artists were located. To test "not" with smallartist.txt, I
+created a command file specifically for testing "not" that I called
+cmdnotsmallartist.txt. In this command file, I tested various edge cases.
+See the line numbers for these specific edge case sections below:
+
+1. Artists that are not in the file (lines 1-84)
+2. Calling not with no artists to be excluded (lines 85-162)
+3. Calling not and excluding every artist in the graph (163-231)
+4. Calling not on two artists that have a valid path between them and then
+   excluding those two artists (lines 232-272)
+5. Excluding the same artist multiple times (lines 273-326)
+6. Calling not on two artists with a valid path between them and then
+   excluding an artist (or artists) to remove all the paths (lines 327-397)
+7. Calling not on two artists that have multiple paths between them and
+   excluding specific artists to remove some of the shortest paths but not all
+   of them (lines 397-503).
+8. Calling not on two artists that have a valid path between them and then
+   excluding one of the two artists (504-543)
+8. Calling not on two artists that don't have a path between them and
+   excluding artists in the graph (lines 544-599)
+9. Calling not on two artists that have a path between them and excluding
+   artists that do not lie on the shortest path (600-651)
+10. Invalid commands or artists with "*" (652-671)
+
+Diff returned no differences. Next I created three different command files to
+test not on the three special artist files I had previously used to test bfs
+and dfs (oneartist.txt, empty.txt, and nodisc.txt). The three command files
+for these three artist files are called cmdnotempty.txt, cmdnotnodisc.txt, and
+cmdnotoneartist.txt, respectively. Here are the lines I added to the bash
+script to test the not files with diff:
+
+#### NOT TESTING
+## Tests on smallartist.txt, a smaller artist file where the paths between
+## artists are clear and easy to see, see README for line number sections
+./SixDegrees smallartist.txt cmdnotsmallartist.txt output.txt
+./the_SixDegrees smallartist.txt cmdnotsmallartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on oneartist.txt, a text file that contains only one artist
+./SixDegrees oneartist.txt cmdnotoneartist.txt output.txt
+./the_SixDegrees oneartist.txt cmdnotoneartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on nodisc.txt, a text file of many artists with no discographies
+./SixDegrees nodisc.txt cmdnotnodisc.txt output.txt
+./the_SixDegrees nodisc.txt cmdnotnodisc.txt demooutput.txt
+diff output.txt demooutput.txt
+## Empty artist file, empty.txt
+./SixDegrees empty.txt cmdnotempty.txt output.txt
+./the_SixDegrees empty.txt cmdnotempty.txt demooutput.txt
+diff output.txt demooutput.txt
+
+After all of these diff tests in run_tests.txt passed for bfs, dfs, and not,
+I was confident with my implementations. To finish, I decided to create one
+last command file (called commands.txt) to test all five of the SixDegrees
+class's commands (including print and quit) on the larger artists.txt file.
+Because of how large this artist file is, it is difficult to determine what
+the result of certain command calls will be. For example, when calling
+bfs or dfs on two artists, it is tough to tell if a path exists since there
+are so many artists and songs in the data set. The same goes for not. Thus,
+this command file is somewhat random in the sense there are not specific
+sections in the command file dedicated to certain edge cases. My goal with
+this test with diff was to ensure my program behaved the same as the reference
+even with a large data set of artists and songs. Here are the lines in my bash
+script that correspond to this diff test:
+
+#### LARGE GENERAL TEST WITH ARTISTS.TXT
+./SixDegrees artists.txt commands.txt output.txt
+./the_SixDegrees artists.txt commands.txt demooutput.txt 
+diff output.txt demooutput.txt
+
+No differences were returned.
+
+After completing all of these tests and my bash script returning no
+differences, I was confident in my implementation of this project.
+
+Before submitting, I made sure to wait until my phase 1 grade was returned.
+I found that my program failed one test:
+test13 - Report Path - Artist to non-existing artist
+I realized that I needed to address the report_path edge case where the
+given source and dest artists are invalid. I added a condition to my
+report_path function and then created one last unit_test to test this
+edge case. The test was successful.
+
+Finally, I submitted.
+
+
+                     ---- ADDITIONAL QUESTIONS ----
+
+1. What is the difference between BFS and DFS? What are their
+pros/cons?
+
+The main difference between BFS and DFS is that when you perform a complete
+BFS on a graph, you find the shortest path from the start node to all other
+nodes in the graph. DFS, on the other hand, is not used to find shortest
+paths and instead just finds a path from the start node to the end nodes.
+DFS is useful when searching for paths deep in the graph. In terms of how
+they work, BFS visits all nodes at distance 0, then distance 1, then distance
+2, etc. DFS instead moves as deep into the graph as possible, then backtracks
+and explores new paths. Time complexity wise, however, both BFS and DFS have
+time complexity O(|V| + |E|) when using an adjacency list and time complexity
+O(|V|^2) when using an adjacency matrix. In this assignment, the CollabGraph
+implementation is akin to an adjacency list, so the time complexity for BFS
+and DFS is O(|V| + |E|). In general, pros and cons wise, if you wanted to find
+any path and didn't care about path length, you should use DFS because it uses
+less memory than BFS. However, if you want shortest paths, you have to use
+BFS.
+
+2. How did you choose to tackle the incl (if implemented) and
+not commands? How do they compare to the BFS and DFS
+algorithms?
+
+I chose to implement the not command using the BFS algorithm. I simply
+marked the artists the user chose to exclude using the provided mark_vertex
+function and then called my bfs function on the two artists to find the
+shortest path between. I chose to use the BFS algorithm as opposed to the DFS
+algorithm because the not command is supposed to find the shortest path
+between the given two artists, not any path. Thus, the not command has the
+same runtime as the bfs command.
+
+3. State what you think your runtime is for each of the commands
+(excluding quit) commands and why.
+
+The CollabGraph class's implementation of the graph is akin to an adjacency
+list implementation. Thus, the runtimes for bfs and dfs are the same as
+that for an adjacency list.
+
+bfs: The worst case time complexity for the bfs command is O(|V|+|E|), the
+     same as for an adjacency list. This is because the neighbors vector
+     allows us to get constant time access to the list of neighbors for each
+     artist in the graph. Thus, in the worst case, to perform a bfs, we have
+     to check every vertex and for every vertex, we have to check each of its
+     neighbors (i.e. for each vertex, onlyÂ that vertex's edges must be
+     visited). Thus, the worst case would see us check each vertex once and
+     each edge once. Because we have constant time access to all neighbors,
+     this equates to |V| + |E|. Thus, the worst case time complexity is 
+     O(|V|+|E|).
+
+dfs: The worst case time complexity for the dfs command is O(|V|+|E|), the
+     same as for bfs. In general, the dfs time complexity should be the same
+     as the bfs time complexity. The reasoning for why the dfs command's time
+     complexity is O(|V|+|E|) is the same reasoning as for bfs. The neighbors
+     vector allows us to get constant time access to the list of neighbors
+     for each artist in the graph. Thus, in the worst case, to perform a dfs,
+     we have to check every vertex and for every vertex, we have to check
+     each of its neighbors (i.e. for each vertex, onlyÂ that vertex's edges
+     must be visited). Thus, the worst case would see us check each vertex
+     once and each edge once. Because we have constant time access to all
+     neighbors, this equates to |V| + |E|. Thus, the worst case time
+     complexity is O(|V|+|E|).
+
+not: The worst case time complexity for the not command is O(|V|+|E|), the
+     same as bfs. In the not command, I used one for loop to mark the
+     excluded vertices in the graph. Then, I used bfs to find the shortest
+     path between the given two artists in the graph. The worst case time
+     complexity of marking the vertices is O(|V|). The worst case time
+     complexity of bfs is O(|V|+|E|), as explained above. O(|V|+|E|) is worse
+     than O(|V|); thus, the worst case time complexity for the not command is
+     O(|V|+|E|).
