@@ -1,0 +1,65 @@
+#!/bin/bash
+
+echo "running tests...."
+
+#### BFS TESTING
+## Tests on smallartist.txt, a smaller artist file where the paths between
+## artists are clear and easy to see, see README for line number sections
+./SixDegrees smallartist.txt cmdbfssmallartist.txt output.txt
+./the_SixDegrees smallartist.txt cmdbfssmallartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on oneartist.txt, a text file that contains only one artist
+./SixDegrees oneartist.txt cmdbfsoneartist.txt output.txt
+./the_SixDegrees oneartist.txt cmdbfsoneartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on nodisc.txt, a text file of many artists with no discographies
+./SixDegrees nodisc.txt cmdbfsnodisc.txt output.txt
+./the_SixDegrees nodisc.txt cmdbfsnodisc.txt demooutput.txt
+diff output.txt demooutput.txt
+## Empty artist file, empty.txt
+./SixDegrees empty.txt cmdbfsempty.txt output.txt
+./the_SixDegrees empty.txt cmdbfsempty.txt demooutput.txt
+diff output.txt demooutput.txt
+####
+#### DFS TESTING
+## Tests on smallartist.txt, a smaller artist file where the paths between
+## artists are clear and easy to see, see README for line number sections
+./SixDegrees smallartist.txt cmddfssmallartist.txt output.txt
+./the_SixDegrees smallartist.txt cmddfssmallartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on oneartist.txt, a text file that contains only one artist
+./SixDegrees oneartist.txt cmddfsoneartist.txt output.txt
+./the_SixDegrees oneartist.txt cmddfsoneartist.txt demooutput.txt
+diff output.txt demooutput.txt 
+## Tests on nodisc.txt, a text file of many artists with no discographies
+./SixDegrees nodisc.txt cmddfsnodisc.txt output.txt
+./the_SixDegrees nodisc.txt cmddfsnodisc.txt demooutput.txt
+diff output.txt demooutput.txt
+## Empty artist file, empty.txt
+./SixDegrees empty.txt cmddfsempty.txt output.txt
+./the_SixDegrees empty.txt cmddfsempty.txt demooutput.txt
+diff output.txt demooutput.txt
+####
+#### NOT TESTING
+## Tests on smallartist.txt, a smaller artist file where the paths between
+## artists are clear and easy to see, see README for line number sections
+./SixDegrees smallartist.txt cmdnotsmallartist.txt output.txt
+./the_SixDegrees smallartist.txt cmdnotsmallartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on oneartist.txt, a text file that contains only one artist
+./SixDegrees oneartist.txt cmdnotoneartist.txt output.txt
+./the_SixDegrees oneartist.txt cmdnotoneartist.txt demooutput.txt
+diff output.txt demooutput.txt
+## Tests on nodisc.txt, a text file of many artists with no discographies
+./SixDegrees nodisc.txt cmdnotnodisc.txt output.txt
+./the_SixDegrees nodisc.txt cmdnotnodisc.txt demooutput.txt
+diff output.txt demooutput.txt
+## Empty artist file, empty.txt
+./SixDegrees empty.txt cmdnotempty.txt output.txt
+./the_SixDegrees empty.txt cmdnotempty.txt demooutput.txt
+diff output.txt demooutput.txt
+####
+#### LARGE GENERAL TEST WITH ARTISTS.TXT
+./SixDegrees artists.txt commands.txt output.txt
+./the_SixDegrees artists.txt commands.txt demooutput.txt 
+diff output.txt demooutput.txt
