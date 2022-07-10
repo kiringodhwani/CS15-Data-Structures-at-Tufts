@@ -1,0 +1,640 @@
+/**********************************************************
+* Project 1 CalcYouLater
+* Comp 15
+* README
+* By Kirin Godhwani, 10/14/21
+*********************************************************/
+
+
+Purpose:
+This project implements a working Reverse Polish Notation (RPN) calculator. 
+RPN is also known as “postfix” notation. The calculator can handle various
+commands and operations such as arithmetic operations like addition and
+division, boolean operations with operators like ==, >, and <=, as well as
+commands that allow the user to operate the calculator and create
+different operations (e.g. adding integers, duplicating, swapping, dropping,
+clearing the calculator, etc.). The calculator can also execute inputted
+rstrings and read in input from a commands file.
+
+How to Compile/Run: 
+Simply type "unit_test" to run the unit tests for the DatumStack class. The
+tests test all of the different member functions of this class.
+
+To test the parseRString function, simply run make testParser, and then type 
+./testParser. From here, the user will be asked to input a string to be parsed
+by the function and then the parsed rstring will be printed out at the end.
+
+To run the RPN Calculator, run make CalcYouLater to build the program and
+then type ./CalcYouLater to run the calculator. From here, the user can begin
+inputting the commands outlined in the spec.
+
+Acknowledgements: 
+To implement my stacks with the vector library, I referenced the following
+link which was posted in Piazza: 
+https://en.cppreference.com/w/cpp/container/vector
+
+I also received help during many office hours from TAs such as Kiran, Niall,
+and CR_Calabrese on the days 10/14, 10/15, 10/14, 10/15, 10/16, 10/17, 10/18,
+10/20, and 10/21. Moreover, when using stringstreams to input certain rstrings
+to the command loop I referenced the following link about using stringstreams:
+http://www.cplusplus.com/reference/sstream/istringstream/istringstream/ 
+
+Lastly, to format rstrings and delete curly braces, I referenced the following
+link about deleting specific characters from a string:
+https://www.cplusplus.com/reference/string/string/erase/
+
+
+Files:
+
+DatumStack.cpp
+     This file implements the member functions of the DatumStack class. 
+     Allows for the construction of instances of the DatumStack stack when
+     given no parameters or an array of Datum, clearing the stack to create an
+     empty stack, returning the number of elements in the stack, returning the
+     top element in the stack, removing the top element in the stack, and
+     adding an element to the top of the stack.
+
+DatumStack.h
+     The interface of the DatumStack class. Defines a stack
+     of Datum elements. Member functions defined to construct instances of the 
+     DatumStack stack, clear the stack, return the size of the stack, return
+     the top element of the stack, remove the top element of the stack, and add
+     an element to the top of the stack.
+
+parser.cpp
+     Implements the parseRString function. This function is
+     important because when reading in an rstring as input, it allows the user
+     to read in a complete rstring, with balanced braces, thereby enabling
+     RPNCalc to handle nested rstrings.
+     
+parser.h 
+     Holds the function contract for the parseRString function. Used in the
+     #include statement in main.cpp to allow for the testing of the
+     parseRString function.
+
+unit_tests.h
+     The file is a unit testing file for the DatumStack Class. The file runs
+     in conjunction with the unit_test framework to allow for the testing of
+     individual member functions in the DatumStack class.
+
+testParser.cpp
+     Contains a main to handles reading in input from std::cin to test the
+     parseRString function. Reads in input from std::cin, calls parseRString
+     after the first curly brace, and prints the parsed rstring to std::cout
+
+README
+     This file.
+
+Makefile
+     The Makefile to compile the program, add the rule for unit test,
+     include a clean command, and also allow for quick submission of all of
+     the necessary files.
+
+RPNCalc.cpp
+     Implements the member functions of the RPNCalc class. These include 
+     an RPNCalc constructor to initialize the RPNCalc object, a destructor that 
+     destroys/deletes/recycles any heap-allocated data one may have
+     used in the RPNCalc instance, a commandLoop function that reads in
+     commands from standard input and performs operations based on the
+     commands, and a run function that calls the commandLoop function and
+     prints the thank you message to std::cerr. Implements the code to handle
+     the logic of processing all of the commands from the input stream.
+
+RPNCalc.h
+     The interface of the RPNCalc class. Handles the logic of processing
+     the commands that come to the run function. Implements the RPN
+     calculator and its commands. Defines a constructor, a destructor, a
+     commandLoop function to read in commands from an input stream and respond
+     to them, and a run function to call commandLoop and print a thank you
+     message. Also declares a private variable of type DatumStack to be used
+     while performing the operations. 
+
+main.cpp
+     Handles simple driver functions, mainly calling the run() function in the
+     RPNCalc class to start the command loop and run the RPN calculator.
+     
+testAll.cyl
+     A .cyl file that contains a large set of commands to test all 
+     components of the RPN calculator. Contains commands to test edge cases
+     as well as the general functionalities of all of the implemented commands. 
+
+demostdout.txt
+     A file to hold the output from the demo RPN calculator. Used with diff
+     to compare output with the student-implemented calculator.
+     
+stdout.txt
+     A file to hold the output from the student-implemented calculator. Used
+     with diff to compare output with the demo program.
+
+test_commands.txt
+     A file of commands that was used to test the "simpler" commands of the
+     RPNCalc interface. Created prior to understanding .cyl files and writing
+     the file command of the RPNCalc interface.
+
+fact.cyl
+     A provided file that runs the calculator commands to compute the
+     factorial of the non-negative integer on the top of the stack. The file
+     uses various commands implemented in RPNCalc. Used to test the RPNCalc
+     commands.
+
+fib.cyl
+     A provided file that runs the calculator commands to compute the
+     fibonacci of the number on the top of the stack. The file uses various
+     commands implemented in RPNCalc. Used to test the RPNCalc commands.
+     
+fib_debug.cyl
+     Shows how to debug RPNCalc with print statements. Used as a reference
+     to help me write my own .cyl file to test the RPNCalc interface. Also
+     used to test the RPNCalc commands by testing the RPNCalcs responses to
+     the various parts of fib.cyl.
+
+Data Structures:
+
+DatumStack interface:
+In the DatumStack interface, the data structure that is implemented is a stack
+of Datum objects. The stack is implemented using the built-in vector library.
+Stacks are a form of list with a restricted interface that is a last in,
+first out data structure. This means that insertions and removals always
+happen at the top of the stack (there is one "busy" end). This differs from 
+queues where insertions and removals always happen on opposite sides. Because
+of the last in, first out nature of stacks, they can be implemented
+efficiently with both linked lists and array lists. Vectors and array lists
+are efficient at implementing stacks because insertion and removal at the
+back of a dynamic array is not very expensive, it is O(1). Thus, we can define
+the top of the stack as the end of the vector and then limit the member
+functions of the implementation to just insertion and removal at the back.
+Having this restricted interface for stacks is good for the user. It forces
+the user to use the data structure in a specific way (in this case, the RPN
+calculator requires a stack because its operations require last in, first out
+nature where operations are performed on the values at the top of the stack).
+The restricted interface is also good because it makes it impossible for the
+user to make certain mistakes. The RPNCalc class uses the DatumStack class's
+stack to perform its postfix operations. The operations require the use of a
+stack because all operations use the operands on the top of the stack. To give
+an example, I will use the following postfix expression: 3 1 4 + * . In this
+expression, the numbers 1 and 4 will first be added and then the result will be
+multiplied by 3. As you can see, the last two numbers (1 and 4) are the
+operands for the first arithmetic operation (addition). A stack is then
+important in our programs to perform these operations because the most recent
+values have to be the operands in each subsequent operation. When 3 1 4 + * is
+entered into the RPN calculator program, 3, 1, and 4 are pushed onto the stack
+in this order with 4 being the value at the top of the stack. Then, when
+addition is commanded, the top two values on the stack must be popped off,
+added together, and the result is then pushed onto the stack. Then, when
+multiplication is commanded, the new top two values on the stack will be
+popped off (5 and 3) and multiplied together with the result being pushed onto
+the stack. As you can see, because of this nature of postfix notation, a stack
+is required for the operations to be performed in the correct order with the
+correct values.
+
+parseRString function:
+In the parseRString function, I created another stack using the vector
+library to hold the opening braces read in from the input stream. Whenever I
+encountered a closing brace, I popped the top of the opening brace stack.
+This allowed me to match up all of the opening and closing braces. Then, when
+the stack was empty, I knew that all of the opening braces had been matched and
+it was time to return the parsed rstring. Moreover, if the stack was not
+empty after parsing through all of the characters, then the input did not
+have enough closing braces to match the opening braces and was thus invalid.
+Using a stack for this function was important because in the input, an opening
+brace must match to a closing brace. So the stack allowed me to keep track
+of all of the opening braces encountered and check to see if they all have a
+match. A stack would be even more important for parenthesis matching when
+the braces are not all the same (e.g (), [], {}). In this case, the opening
+braces would be read into the stack and then the top of the stack would have
+to be compared with the first encountered closing brace to make sure it was
+the closing brace of the correct type. 
+
+Times I would use a stack:
+Stacks are implemented when a last in, first out data structure is required.
+One example of when you could utilize a stack is to represent a stack of clean
+plates in a cafeteria. When someone goes to eat, they will take a clean plate
+off the top of the stack of plates. When a new plate is cleaned, it will be
+placed onto the top of the stack of plates. This demonstrates that the stack
+of clean plates has a last in, first out nature because the most recent
+clean plate placed onto the stack will be the first plate removed from the
+stack by a cafeteria-goer. Thus, a stack would be utilized the represent
+the plates. A more complex example of when a stack would be utilized is in
+performing pre-order and in-order traversals with a binary tree. When using
+stacks to perform these traversals, rather than making a recursive call when
+encountering a new object, pointers to the objects are pushed onto the stack.
+Then, while the stack is not empty, first pop an object off the stack and then
+process that node (whatever that means for the application. Next, if the
+object has a a right child, push it on the stack, and if the object has a left
+child, push it on the stack. Following these guidelines, in-order and
+pre-order traversals can be done with stacks. Another example is the
+example of parsing strings that have different types of parenthesis. I
+explained this example above when discussing my parser function.
+
+Testing:
+
+Phase 1 Testing: 
+
+                      DatumStack.h and DatumStack.cpp
+                      
+The first code I wrote was the implementation of the DatumStack interface.
+I first created the header file and then implemented each of the functions 
+1 by 1 while testing each of the functions with unit_test. 
+
+default_constructor_test
+I first wrote the default constructor and wrote a test in unit_test that
+simply initialized an instance of DatumStack to to make sure there are no
+runtime errors or memory leaks. The test compiled successfully and was
+successful. Later I also printed the empty stack with debug_print to make
+sure that it was an empty stack.
+
+push_test
+I next decided to implement push() because I knew I would need it to write
+the second constructor. After writing the function and beginning testing,
+I realized that I would need to implement size() and top() to test push().
+I also decided that I would need to implement a debug_print() function for 
+debugging that would allow me to see the stack debug_printing out in the
+correct order. I called this function debug_print(). With each use of
+debug_print, I also printed other lines to std::cout that said what
+debug_print should print. So, I implemented these three functions and wrote
+tests for push() that use size(), top(), debug_print() and assert(). The
+push_test was successful. Here is an example of how I used debug_print to test
+my functions. This is the output I printed for the push_test (note: the first
+line that say "Should have 7 elements..." was printed separately, it's not
+part of the function):
+
+push test - stdout
+------------------
+Should have 7 elements with 11 at the top: 
+Bottom [5][#t][Kirin][8][#f][Godhwani][11] Top
+
+
+I later added separate tests for size() and top() after implementing the
+second constructor.
+
+second_constructor_test
+I tested my second constructor by initializing an instance of DatumStack
+with the second constructor and then using assert(), size(), top(), and
+debug_print() to make sure it initialized correctly with the correct order.
+The test was successful.
+
+size_test
+Next, I tested size() and top(). To test size(), I initialized stacks of
+different sizes and used assert() to make sure the correct sizes were being
+returned. This test (size_test) was successful.
+
+top_test, top_exception_test
+To test top(), I initialized different stacks and tested their
+top values with top() and assert(), and I used push() and tested the new top()
+values with top() and assert(). I also created another test to test that
+top() correctly throws the exception when called on an empty stack. As
+expected, the top_test passed successfully and the top_exception_test failed
+and threw the correct exception with the correct error message: 
+
+== test output for failing tests ==
+top exception test - stderr
+---------------------------
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  empty_stack
+  
+isEmpty_test
+Next, I implemented and tested isEmpty(). I tested isEmpty by initializing
+an empty stack and two non-Empty stacks and then testing that isEmpty()
+returned the correct value for each of the three stacks with assert().
+
+clear_test
+Next, I implemented and tested clear(). To test clear(), I initialized
+different stacks, called clear on the stacks, and made sure the stacks
+were then empty using isEmpty(), assert(), and debug_print(). The tests
+compiled and passed.
+
+pop_test, pop_exception_test
+To test pop(), I initialized different stacks, called pop() on them, and
+tested that the new top() values were correct with top() and assert(). I
+also made sure to see that the size correctly changed. By testing the
+change in size and top, I could confirm that the pops were successful.
+I also used debug_print() in different places in the test to make sure the
+stack was correct at different points in time during the test. I also created
+another test to test that pop() correctly throws the exception when called on
+an empty stack. As expected, the pop_test passed successfully and the
+pop_exception_test failed and threw the correct exception with the correct
+error message: 
+
+pop exception test - stderr
+---------------------------
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  empty_stack
+  
+After creating all of these tests to test all of the member functions of the
+DatumStack interface and seeing the tests receive the correct results, I was
+confident that I had implemented the DatumStack class correctly. When I
+finished testing, I commented out the two tests I wrote that were meant
+to fail (i.e. pop_exception_test and top_exception_test).
+
+                                parser.cpp
+
+To test my parseRString function I created a separate main file so that I
+could pass in strings to parse with std::cin (I later changed its name from
+main.cpp to testParser.cpp). In the testParser file, I wrote the
+code that would allow me to take in a string from std::cin and then called
+the parseRString function when the first curly brace appeared in the string.
+When I first created main, edited my makefile, and ran the program, I
+noticed various problems with my parseRString function. The major problem
+initially was that the program was entering an infinite loop and not ending.
+I added std::cout statements in different places in the program to see
+where the program was getting stuck. I found the problem to be in my while
+loop in the parseRString function. A major part of my while loop is that
+it parses the inputted string character by character and then builds a
+string from the characters. I decided to print out this building string.
+Here was the result in terminal:
+
+Enter the string to be parsed: 
+{ 1 2 + }
+{
+{ 1 
+{ 1 2 
+{ 1 2 + 
+{ 1 2 + } 
+^C
+
+It seemed that the string was correctly building and my program was correctly
+parsing the string; however, after the program fully built, the while loop
+was not being stopped. I decided to change my while loop condition. To give
+some background on this condition. curlyStack is a stack I created to hold
+opening braces read in from the input. Before the loop begins, the stack
+starts with one opening brace pushed on (because the function is called after
+the first opening brace), and during the loop, each new opening brace is
+pushed onto the stack and each encountered closing brace causes the top
+element on the stack to be popped. To fix the problem in my while loop, I
+initially tried to change my while loop condition from 
+(input >> c) or (curlyStack.empty()) 
+to 
+(input >> c) and (not curlyStack.empty())
+When I made this change, it still did not work. I then changed the condition
+to just:
+(not curlyStack.empty())
+so that the while loop would simply end when all of the opening braces were 
+matched. In the spec, it explained that the case that not all of the opening
+braces get matched is not necessary to handle so having input >> c in the
+condition was unecessary.
+
+With my new condition, I began testing. I first tested with the first example
+given in the spec. Here is the output in terminal as formatted by my
+testParser file. The line that begins with "Parsed String:" shows the
+string returned by the parseRString function:
+ 
+Enter the string to be parsed: { 1 2 + }
+1 
+1 2 
+1 2 + 
+1 2 + } 
+Parsed String: { 1 2 + }
+
+As you can see above, the function worked successfully. The output between the
+lines that begin with "Enter the string to be parsed" and "Parsed String: "
+shows the string being built in the parseRString function as each character
+is parsed individually. Because the function is called after the first
+opening bracket, the string being built in parseRString does not contain the
+opening bracket, so I have to add it to the beginning of the string after
+building the rest. Next I tested with the second example in the spec: 
+
+Enter the string to be parsed: { 1 { 4 2 / } / }
+1 
+1 { 
+1 { 4 
+1 { 4 2 
+1 { 4 2 / 
+1 { 4 2 / } 
+1 { 4 2 / } / 
+1 { 4 2 / } / } 
+Parsed String: { 1 { 4 2 / } / }
+
+This was also successful. Next, I tested with different edge cases. First
+I tested an example that had too many closed braces: { 1 { 4 2 } } / } / } }
+This was also successful, because my function correctly returned the string 
+when all of the opening braces had been matched. So, all of the extra
+characters after all the braces were matched were correctly left out.
+are matched should not be returned as a part of the string. Lastly, I tested
+with a very long input of many nested braces and characters:
+
+{ { 3 k / ? { L { 4 { ; " { } w e r } 6 7 } q } } u Z 2 9 }
+
+My code was once again successful:
+Parsed String: { { 3 k / ? { L { 4 { ; " { } w e r } 6 7 } q } } u Z 2 9 }
+
+Later, while talking to a TA, I realized that because I was reading in 
+characters individually as opposed to strings, my code would have problems
+with reading values of more than one character. To fix this problem, I changed
+my code so that it was instead reading in each string from the input. This
+code passed all of my previous tests. I then added a provide section to my
+Makefile and submitted phase 1 of the project.
+
+------------------------------------------------------------------------------
+
+Phase 2 Testing:
+
+                      RPNCalc run() 'Simpler' Commands
+
+NOTE: After I implemented the exec command, I found that my program would
+print the thank you message whenever I ran a stringstream through my
+command loop. To fix this error, I moved my command loop into a new
+function called commandLoop() and changed my run() function to simply
+call commandLoop() and print the thank you message. Thus, in the early parts
+of this testing, I may refer to the run() function as the place where I
+implement the code to address the user commands though that code is now in my
+commandLoop() function.
+
+After writing the RPNCalc interface and implementing the constructor and
+destructor (which were empty), I jumped into writing the code for the 
+'simpler' commands of the run function. These commands were not very difficult
+to handle so I was pretty confident with my implementations of them. To test
+them, I created a file of commands that I could read through standard input.
+
+Note: Looking back at the initial file of commands I wrote, I realize that the
+commands were very random which made debugging differences with the demo 
+very difficult. If I could redo this testing, I would have made the commands
+I tested more purposeful and organized. I also would have shortened the
+number of commands and tested different cases separately. However, at the
+time, I did not consider these things so my initial command file was a list
+of random commands.
+
+After writing my command file, I inputted it to the run function through
+standard input and outputted the run() function's responses in terminal to a 
+file so that I could compare my program's output with the demo:
+
+./main < testcommands.txt > stdout.txt
+./main < testcommands.txt > demostdout.txt
+diff stdout.txt demostdout.txt
+
+The first difference found was that my program was incorrectly handling 
+the addition command. My program would end up with an extra value on the
+stack as compared to the demo after performing addition. I found that in my 
+code for the add command I was forgetting to pop the second operand. After
+fixing this issue, the problem was solved and diff returned no differences
+among the addition commands.
+
+More differences, though, arose, so, I kept going through the commands in
+sections manually. The next problem I encountered was with the following
+block of commands: 
+
+12 6 36 4                    // adds 4 numbers to the stack
+/ print                      // 36 / 4, pushes 9 onto the top of the stack
+- print                      // 6 - 9, pushes -3 onto the stack 
+/ print                      // 12 / -3, pushes -4 onto the stack 
+3 mod print clear            // -4 mod 3, pushes -1 onto the stack, clears
+
+I found that when I called the final line of these commands on my program,
+the empty stack error was printed. However, when I ran these commands on
+the demo, the last line correctly returned -1 as the result of the mod
+operation. Fixing this issue was very simple because the I had simply forgotten
+to push the result of the mod operation onto the stack in my code. When I
+made the change, my program was successful with this set of commands.
+
+I continued to analyze the remaining differences manually with std::cin. I
+found the next problem to be with my program popping values off the stack
+when exceptions are thrown. The problem seemed to be that when my program
+called an arithmetic operation on a non-integer, it would print out the
+correct error messages but it would not pop the two operands off of the stack.
+I realized that I needed to change the order of some of my command operations
+so that the operands on the stack were popped before I tried to get their
+value. To give an example, I changed my addition operation from:
+
+int x = stack.top().getInt();
+stack.pop();
+int y = stack.top().getInt();
+stack.pop();
+int z = x + y;
+Datum d(z);
+stack.push(d);
+
+to:
+
+Datum n1 = stack.top();
+stack.pop();
+Datum n2 = stack.top();
+stack.pop();
+int x = n1.getInt();
+int y = n2.getInt();
+int z = x + y;
+Datum d(z);
+stack.push(d);
+
+As you can see, with the new code, when exceptions are thrown about values
+not being integers, the operands have already been popped off so the stack
+will not contain either of the operands.
+
+The final problem arose with differences in how my program handled the ==
+command and how the demo did. I found that in my program, I was forgetting 
+to consider that values of different types can be compared with the ==
+command. I was throwing exceptions when values weren't integers which was
+incorrect. Once I addressed this problem, no more differences appeared
+between my program and the demo.
+
+To finish, I decided to add a lot more commands to the text file in
+order to test more edge cases such as comparisons between booleans and ints
+and arithmetic operations between booleans and ints. I also added tests for 
+division and mod with 0 in the denominator. When I ran run() with the new
+commands, diff returned no differences. Moreover, I asked a TA about comparing
+the std:err messages in terminal between my program and the demo. He told me
+to run the following lines in bash:
+
+bash-4.2$ ./main < testcommands.txt &> stdout.txt
+bash-4.2$ ./theCalcYouLater < testcommands.txt &> demostdout.txt
+bash-4.2$ diff stdout.txt demostdout.txt
+bash-4.2$ 
+
+As you can see, my program had no differences with the demo when comparing
+both the output to std:err and the output to std::cout. Later I changed
+my while loop a bit from a do while to a while loop with the following
+condition: 
+
+while (input >> cmd) {
+
+I tested my new loop with the same commands in bash and found the program to
+still be successful. 
+
+One other small thing I later tested with my run() function is if it
+successfully ends when reaching the end of input on std::cin. To test this I
+ran my program and I ran the demo and entered control + d into terminal while
+reading in from standard input. I then made sure that my program correctly
+printed the thank you message when control + d was inputted. This was
+successful.
+
+Next, I implemented the rstring command and the exec command to execute 
+rstrings. The rstring command was just a call to my parseRString function 
+which I had already tested. Thus, I did not have to test this command
+very thoroughly other than testing it manually in terminal. I also knew
+that this command would be thoroughly tested with the .cylc files I would
+use later. I found initial testing to also not be too important for the exec
+command. This command simply converted the given rstring to a stringstream
+and ran my run() function with this stringstream as a parameter. Because
+I had already tested the run() function thoroughly, I did not need to
+test this command very much initially. Once again, I also new it would be
+thoroughly tested by the .cylc files I would later use. The only small problem
+that came back from initial testing with the exec command was that after
+processing an rstring by inputting it to run(), the thank you message would
+print. To deal with this problem, I transferred my command loop to a new
+function called commandLoop(). Then, I created a new function called run()
+that called the commandLoop() and printed the thank you message to standard
+error.
+
+Next, I implemented the file command. After implementing, I first tested
+in terminal that the correct error message was printed when file was
+called on an invalid file name. This was successful. Next, I tried to test
+file on one of the given .cyl files. I decided to choose fib.cyl. So, 
+I converted it to a .cylc and ran file; however, I found that my program
+could not handle this file because the if command was not yet implemented in
+my command loop. So, I decided to implement if.
+
+After implementing if, I tested with fib.cylc and found that both my program
+and the demo outputted 55 when running the fib.cylc file with 10 as the input.
+I further tested it with values like 0, 1, 5, and 20. I noticed that with 20
+it took some time for both programs to process. Next, I tested with the other
+two provided .cyl files: fact.cyl and fib_debug.cyl. 
+
+Once again, with fact.cyl, my program returned the same result as the demo
+with the values I tested (e.g. 0, 1, 5, 15, 20). One interesting thing was
+that the demo and my program both returned the same negative number for
+20. I assume it is because 20! is a very large value.
+
+I then ran file with fib_debug.cyl to see debugging. I noticed that pretty
+much every operation was printed out in terminal. This made it very easy to
+see where different problems arose in the operations to see differences
+between the demo and your own code. I then knew that when making my own
+.cylc files I would need to include a bunch of print commands and then
+compare the result between my program and the demo with diff.
+
+So, I next wrote my own .cyl with a ton of commands to test all of the
+commands in the command loop and also various edge cases. I named this file
+testAll.cyl. Using the % symbol I was able to write comments about what every
+section was testing. I also wrote the sections one at a time and tested each
+section individually after writing it. This made is so that it was easier for
+me to tell which commands were failing (it would be very difficult to tell if
+I had simply written a ton of tests and tested them all together). I then
+converted the file to a .cylc using the directions in the spec and then tested
+with diff in bash. One thing I noticed is that because the commands file I
+wrote is so long, it took some time for both demo and my program to fully
+process it:
+
+vm-hw07{kgodhw01}229: bash
+bash-4.2$ ./theCalcYouLater < testAll.cylc &> demostdout.txt
+bash-4.2$ ./main < testAll.cylc &> stdout.txt
+bash-4.2$ diff stdout.txt demostdout.txt
+bash-4.2$ 
+
+Because no differences were returned, my program had the same output to
+standard output and standard error as the demo. From here, I knew my program
+was successful so I edited my README and submitted the project.
+
+Before submitting, I also made sure that I got a 20/20 on phase 1 of the
+project so that there were no things I needed to change about this section.
+
+
+Time Spent:
+
+10/14: 4 hours
+10/15: 0.5 hours
+10/16: 2 hours
+10/17: 5 hours
+10/18: 5 hours
+10/19: 1 hour
+10/20: 3.5 hours
+10/21: 1.5 hours
+10/22: 1 hour
+10/24: 2 hours
+
