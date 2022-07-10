@@ -1,0 +1,566 @@
+----------------------------------------------------------------------
+|                      CS 15 HOMEWORK 1: LISTS                       |
+| [NAME]                   Kirin Godhwani                            
+| [DATE]                      9/18/21                                 |
+----------------------------------------------------------------------
+
+                           ---- PURPOSE ----
+This program offers two different lists that store characters. They
+maintain the stored characters in their given order, with some extra
+features, such as the ability to concatenate lists.
+
+                      ---- ACKNOWLEDGEMENTS ----
+I received help from my lecture notes and from office hours. I went to office
+hours on 9/21 and received help from Kiran and office hours on 9/24 and 
+received help from Amy.
+
+                            ---- FILES ----
+CharArrayList.h: This file is the Interface of the CharArrayList class,
+which includes key information regarding the array lists. In the file, 
+public and private member functions are declared, important private member
+variables for the class are declared to keep track of the array's address,
+the number of characters in the list, and the current size of the array
+in memory, and a global constant is declared for the initial capacity 
+of array lists.
+  
+CharArrayList.cpp: This file is the implementation of the CharArrayList class
+which includes key functions regarding the array list, such as the default and
+parametrized constructors, the destructor, assignment operator, print
+function, insertAt function, removeAt function, concatenate function, 
+the two private member functions shrink() and expand(), and other helper
+functions.
+  
+CharLinkedList.h: This file is the Interface of the CharLinkedList class,
+which includes key information regarding the linked lists. In the file, 
+public and private member functions are declared, the Node struct is
+defined in private, and some private member variables for the class are 
+declared to keep track of the size of the linked list and point to the
+first Node in the linked list.
+
+CharLinkedList.cpp: This is the implementation of the CharLinkedList class
+which includes key functions regarding the linked list, such as the default
+and parametrized constructors, the destructor, assignment operator,
+print function, insertAt function, removeAt function, concatenate function,
+the private member function newNode which is used to create new Nodes, and
+other helper functions.
+
+unit_tests.h: The file is a unit testing file for the CharArrayList Class
+and CharLinkedList Class. The file runs in conjunction with the unit_test
+framework to allow for the testing of individual member functions in 
+the two classes.
+
+                 ---- COMPILE / RUN INSTRUCTIONS ----
+Simply type "unit_test" to run the unit tests for the CharArrayList
+and CharLinkedList classes. This folder contains no driver, or
+application, besides the unit tests for the list classes.
+
+                ---- DATA STRUCTURES / ALGORITHMS ---- 
+
+In this lab, we used two different types of data structures, array lists
+and linked lists. Both data structures are forms of lists with ordered 
+collections of elements, a linear shape, and a size that varies and is
+not known until runtime. 
+
+Array Lists, Advantages and Disadvantages:
+Array lists are arrays that can change in size 
+(they can expand and shrink). This is accomplished thanks to pointers and 
+the heap. We can create new arrays in memory of greater capacity, transfer
+the elements of an old array into the new array, and then delete the old
+array. The main advantages of array lists are that they are able to change 
+in size unlike normal c++ arrays, and array lists provide instant access to
+any array element using its index. In array lists, elements are stored
+contiguously in memory so this is possible. Array lists, though, have many 
+important disadvantages. Firstly, there is a time vs. space tradeoff when
+growing array lists. In the current program we made, everytime an array 
+list reaches capacity, we create an array that is 2x + 2 its original 
+size (where x = the original size). Though this strategy may be time 
+efficient because it creates enough space that expansion isn't needed 
+often, it is space inefficient because it makes it so that half of the 
+newly expanded array is initially unused. Further, to try to solve this
+problem, if we instead decided to grow the array list by one every time
+to eliminate the unused space, it would be extremely time inefficient.
+We would need to grow the array each time we wanted to add a new element
+and each time we grow the array, we haver to copy the entire old array to
+the newly expanded one. Another disadvantage of array lists is that it 
+is difficult (expensive) to insert new elements and remove old elements near
+the front of an array list. This is because when inserting and removing
+near the front, one must shift all subsequent elements of the array.
+
+Linked Lists, Advantages and Disadvantages:
+Linked Lists are a form of list that is comprised of Nodes. Each Node is
+made up of a piece of data and a pointer to another Node in the list. With 
+these pointers, Nodes link together to create a linear series of Nodes
+(each Node keeps track of the next Node). Unlike array lists, data is not
+contiguous in linked lists, so Nodes can be stored anywhere in memory.
+In linked lists, the only thing that must be kept track is the first Node
+because all subsequent Nodes can be accessed from the first Node. A
+special value called a sentinel is used to indicate when the end of the 
+list is reached; in this class, that value is nullptr. Moreover,
+the definition of a linked list is recursive - can either be empty (nullptr)
+or can contain a Node with a piece of data and a pointer to a linked list.
+With its recursive definition, many linked list operations have recursive
+structure. Linked lists being non-contiguous brings advantages and 
+disadvantages. An advantage is that it makes insertion/removal at the
+front of the list much easier and faster. A disadvantage, though, is that 
+you cannot calculate memory addresses in the list based on indices (which 
+you can in array lists). 
+
+Advantages and Disadvatages when looking at specific functions:
+Array lists and linked lists make certain important member functions easier
+and less expensive than their counterpart. With the elementAt() function, 
+linked lists make things far more difficult because one must iterate
+through the list until the desired element is reached. Array lists can
+simply jump to the address of the element using its index. Adding at the 
+back of the list is also far more difficult with linked lists because it 
+requires iterating through the list until the last Node is reached. With 
+array lists, one simply must set the first available element (as accessed 
+by index) to the new element. Adding at the front of the list, though, as 
+explained earlier, is far easier with linked lists since they are
+non-contiguous. Adding at the front of an array list requires shifting all 
+of the subsequent elements over. Checking the size of the list is easy with 
+both, as a private member variable for size is generally included in both.
+Removing from a list at a given index is easier for array lists when removal
+is at the end of the list and easier for linked lists when removal is at 
+the front of the list. This mirrors the difference between adding at the 
+front and back with these two types of lists.
+
+Doubly-Linked List vs. Singly-Linked List:
+Doubly-Linked Lists are linked lists where each Node keeps track of both 
+the Node in front of it and the Node behind it. Singly-Linked List Nodes 
+only keep track of the Node in front of it. Doubly-Linked Lists make 
+certain operations easier because starting at any Node, one can reach any 
+other Node in the list. Moreover, with inserting at or removing at a
+particular position, it is easier to update pointers since the previous 
+and next Nodes can be easily accessed. The disadvatage of doubly-linked lists
+is that they require you to maintain a lot more pointers. As a result, one
+must be very careful and they must be especially careful with edge cases 
+to avoid seg faults.
+
+When to use array list vs linked list:
+Based on the advantage and disadvantages I explained earlier for array lists 
+and linked lists, somebody should use linked lists when they are dealing 
+with a lot of insertion or deletion at the front or near the front of the
+list. Someone should use array lists when they are dealing with a lot of
+insertion or deletion near the end of the list. Someone should also use an 
+array list if they need to use the elementAt() function consistently to
+access specific elements in the list.
+
+My opinion of the choice to use a doubly-linked list:
+In my opinion, I would have used a singly-linked list as opposed to a
+doubly-linked list. I thought that maintaining all of the pointers was very 
+difficult, and I do not think that the benefits (I described the benefits
+above) of using the doubly-linked list outweighed the extra effort I was
+forced to put in. There were so many functions that were only made difficult
+because of extra conditions or extra code I had to add to deal with the
+doubly-linked list Nodes and the previous pointer. At times, I though it was
+overwhelming and confusing dealing with setting the next values for certain
+Nodes as well as the previous values for other Nodes. I honestly thought
+that just about every function would have been easier with singly-linked
+lists. The fact is that all functions can be done only going forwards
+and that is what I did during this assignment. However, I may have
+appreciated doubly-linked lists a lot more if we were using them to solve 
+a problem they are highly beneficial for. For example, if we were creating 
+linked lists with thousands of Nodes and then inserting new Nodes inside the
+list, I definitely would have appreciated using a doubly-linked list with 
+a back pointer so that I could traverse starting from the back of the list 
+or the front to reach the index of insertion. This would make things a lot 
+faster and more efficient than always starting from the front even when the 
+index of insertion is at the end of the list.
+
+                           ---- TESTING ----
+
+NOTE: All tests with names that begin with "FAIL" are meant to fail. The
+purpose of them is to test that the correct error messages are being printed.
+I commented all of these tests out.
+
+NOTE: All tests are given names that say what function they are testing.
+
+                           Array List Testing
+                           
+The first thing I did was define the private members of the class (the expand
+and shrink functions), make sure the .h file was included, and run unit_test 
+to make sure the class definition was syntactically correct and correctly 
+included in the unit test driver. The tests compiled successfully.
+
+elementAt() test: void elementAt_test_AL() and void FAIL_elementAt_test_AL()
+The default constructor was already implemented and a test was already written
+in the unit test file that compiled successfully and passed. So, I next wrote 
+the destructor (which I tested later) and completed the print function by 
+completing the elementAt function. To test the elementAt function, I first 
+completed the second constructor and made a test (void second_constructor_AL())
+that ran the second constructor to make sure there were no runtime errors 
+or memory leaks -   
+CharArrayList testArrayList('A');
+I then began testing the elementAt function by initializing a one character 
+CharArrayList and using the assert function to make sure that the elementAt 
+function detected the correct character at index 0 - 
+CharArrayList testArrayList('A');
+assert(testArrayList.elementAt(0) == 'A');
+This test compiled successfully and passed. To further test elementAt, I 
+tested to see that error messages were successfully printing when an 
+invalid index was entered - 
+assert(testArrayList.elementAt(5));
+As expected, the test failed and the correct error message printed - "index 5
+not in range [0..1)". These tests showed me that my elementAt function
+was working, and the first test further showed me that my second contructor 
+was working. I later tested the second constructor more with elementAt(),
+size(), and print().
+
+Third Constructor Test: void third_constructor_AL()
+Next, I implemented my third constructor and tested it. I tested it using 
+the assert() function combined with the elementAt() function and size() 
+function. These tests compiled successfully and passed. Moreover, I had 
+previously completed the elementAt() function, which was the final piece in 
+completing the the print() function. With the print function completed, I used
+it to print the list I created with the third constructor. This allowed me to
+test both the print function and the third constructor. The third constructor
+was printed correctly in terminal. Later on, I added the expand() function 
+to the third constructor and tested it with lists larger than the
+initial capacity.
+
+first() and last() tests: void first_last_test_AL(), void FAIL_first_AL(),
+void FAIL_last_AL()
+Next, I implemented the first() and last() functions. I created a test 
+that had the functions print the first and last elements of a list made by 
+the third constructor. This test was successful. Then, I created tests to
+make sure they printed the correct error messages when they were called on 
+empty lists. The correct error messages were printed.
+
+clear() and isEmpty() test: void clear_AL()
+Next, I implemented the clear() function. I created a test that made an
+array list of multiple elements using the third constructor and then used 
+the clear() function to clear all of the elements in the list. I used the 
+size() and isEmpty() function in the test and I also printed out the empty 
+array at the end to show that the test was successful. The test compiled 
+successfully and passed. Because I used isEmpty(), the test also allowed me 
+to test isEmpty() (though isEmpty() was a provided function). Later, I 
+tested clear() on one element lists and empty lists. These tests were 
+successful.
+
+expand(), pushAtBack(), pushAtFront(): void pushAtBack_AL(), 
+void pushAtFront_AL() 
+Before starting the pushAtBack() and pushAtFront() functions, I created 
+the expand() function. Because the expand() function is a private member
+of the class, to test it, I must test it as a part of the pushAtBack() or
+pushAtFront() functions. So, I implemented these functions. First, I 
+implemented the pushAtBack() function and created tests for it. I
+created an array list of multiple elements using the third constructor.
+Then, I ran the pushAtBack function to add a character to the end of the 
+list. Because the list was full, the expand() function was called
+to expand the array list. To check that the expansion and addition was 
+successful, I used the assert() function, the size() function, the last() 
+function, and the print() function. The tests were successful. To test
+the pushAtFront() function, I used the same methods as for the pushAtBack()
+tests except instead of the last() function, I used the first() function.
+This test also compiled successfully and passed, showing me that the 
+pushAtFront() function, pushAtBack() function, and expand() functions seemed 
+to be functioning correctly. Later, to ensure I tested pushAtFront() and 
+pushAtBack() on all cases, I tested them with empty lists and one element 
+lists. These tests compiled correctly and passed; though, I had to add a 
+new condition to pushAtBack() for empty lists.
+
+insertAt(): void insertAt_AL(), void FAIL1_insertAt_AL(), 
+void FAIL2_insertAt_AL()
+I next implemented the insertAt() function. To test it, I used the elementAt()
+function, the assert() function, the print() function and the size() function.
+I also inserted multiple elements as opposed to just one. With the insertAt()
+function, I also had to make sure the error message correctly printed out when
+given an invalid index. These tests were successful. In my test, I also made
+sure to address all possible cases like I did while testing the pushAtBack()
+and pushAtFront() functions (e.g.  insertion into an empty list, insertion
+into a 1-element list, insertion in the middle of a larger list, insertion
+at the front of a larger list, insertion at the back of a larger list).
+
+shrink() test: void shrink_AL() (this test is commented out along with the 
+public function created to return capacity which is used in this test)
+Next, I created the shrink() function to shrink the array list when its length
+falls below 1/4 of its capacity. Once again, just like the expand() function,
+the shrink() function is a private member of the class. So, to test it, it 
+must be tested with the popFromFront(), popFromBack(), or removeAt() 
+functions. Because these functions were already implemented, I simply needed 
+to add the shrink() function to them and then write tests. To test that
+shrink() was correctly shrinking the capacity, I created a new public
+function within the header file called return_cap(). This function returns 
+an integer that is equal to the current capacity of the list, so it can be 
+used to see if the capacity is being shrunk by the shrink() function.
+The tests were successful and the shrink() function shrunk the list down to
+a capacity of 4 when the list length was decreased to 1 (initial capacity 
+was 10). After finishing this test, I commented out the public function 
+I created (return_cap()), its implementation, and I commented out the test.
+
+replaceAt() test: void replaceAt_AL(), void FAIL_replaceAt_AL()
+Next, I implemented the replaceAt() function and tested it with assert(), 
+elementAt(), and print(). These tests were successful. I also tested to 
+make sure it correctly printed the failure message when given an invalid 
+index. These tests compiled successfully, failed, and printed the correct 
+error messages.
+
+concatenate() test: void concatenate_AL()
+I implemented the concatenate() function and tested it with two 
+lists and the assert(), elementAt(), and print() functions. The tests compiled 
+successfully and passed. Later I tested it with various types of lists
+including empty lists. These tests were all successful. However, later on,
+to simplify the code, I decided to replace - 
+  
+if (len == cap) {
+    expand();
+}
+
+data[len] = other.data[i];
+len++;
+
+with "pushAtBack(other.data[i]);". When I did this, the program began to 
+fail the valgrind tests. I realized that in my pushAtBack() function, I 
+had a special condition for when it is called upon empty lists. In this
+case, it uses new to create a new one character array. However, I forgot 
+to include a delete in this segment which was causing the valgrind error. 
+I realized that the code I needed for this part was to simply call my 
+pushAtFront() function to address this case in pushAtBack(). Once this fix 
+was made, the problem was solved and my concatenate() function stopped 
+failing valgrind.
+
+Copy constructor and assignment operator tests: void copy_constructor_AL(),
+void assignment_operator_AL()
+With all of my functions implemented, I could test the copy
+constructor and assignment operator since all they needed to be implemented 
+were the completion of other member functions. These functions included clear(), 
+pushAtBack(), and elementAt(). Testing these two functions further tested
+these member functions. To test the copy constructor, I created an array list
+of elements and then used the copy constructor to copy that lists information
+to a new list. To test the assignment operator, I created two different lists
+and then used the assignment operator to make them identical. I tested the
+success of these operations with different member functions. Moreover,
+because these functions were provided to us, testing them was unnecessary;
+I only tested them to ensure the functions I wrote (and were included in
+these functions) were working correctly. The tests were successful.
+
+Testing the destructor
+To test the destructor, I first ran unit_test and saw that all of my function 
+tests passed the valgrind tests in unit_test. To ensure that it was my 
+destructor causing my code to pass the valgrind tests (making sure that no 
+data was being leaked), I commented out the following code that made up my 
+destructor - 
+
+delete [] data;
+data = nullptr;
+
+I then ran unit_test. When I ran unit_test, every single one of my function 
+tests (except for the default constructor tests) failed the valgrind test 
+(the defalt constructor tests didn't fail because they don't involve 
+allocating new data with "new"). Based on these tests, I knew that my 
+destructor was functioning correctly.
+
+NOTE: I did not write specific tests for popFromBack() and popFromFront()
+because they were provided functions and Piazza stated we do not need to
+test the provided functions. I did, though, test removeAt() with the 
+shrink() function, and removeAt() is the main part of popFromBack() and 
+popFromFront().
+
+                       Doubly Linked List Testing
+The first thing I did to test my Doubly Linked List was define the private 
+member variables, make sure the correct includes were on the files, and run 
+unit_test to make sure my class definition was syntactically correct and 
+correctly included in the test driver. Unit_test compiled successfully.
+
+Default constructor: void default_constructor_LL()
+Following the the implementation advice, I next implemented the default 
+constructor and tested it using the pre-written test on unit_tests.h. The 
+test compiled correctly and passed.
+
+NewNode() and Second Constructor: void second_constructor_LL()
+Next, I implemented the NewNode() function, which is a private member 
+function I added the header file to fulfill the purpose of creating new
+Nodes. I then used NewNode() to write the second constructor. I was then 
+able to create one test to test both NewNode() and the second constructor 
+together. The test passed the regular tests, however, it failed the valgrind
+test. I realized that this was because my destructor had not been
+implemented. So, I implemented my destructor.
+
+Destructor
+To address my second constructor test failing the valgrind test, I
+implemented the destructor. To test it, I then re-ran my second constructor 
+test with unit_test to see if it still failed the valgrind test. The test 
+compiled successfully, passed the normal test, and passed the valgrind test,
+which showed me that my second constructor was working correctly and my 
+destructor was working correctly. Later on, after finishing all of my tests,
+I tested it the same way I tested my destructor for the array list portion 
+of the assignment. First, I saw that none of my tests (I tested every
+linked list function) failed valgrind. Then, I commented out the one line 
+in my destructor which calls the recursive helper to recycle lists, and 
+the result was that virtually all of my functions failed valgrind (not all of
+them fail because not all of the function involve allocating new data). Thus,
+I knew my destructor was functioning correctly.
+
+Print(): void print_second_LL(), print() is also included in just about
+every linked list test.
+Continuing to follow the implementation advice, I next implemented the
+print() function. To test it, I used it to print a list created by the 
+second constructor. The test compiled successfully and the list was 
+correctly printed. Next, I created an empty list using the default 
+constructor to make sure the print() function would work on an empty list.
+The test compiled successfully and printed out the empty list successfully.
+To further test print(), I implemented the third constructor so that I 
+could try to print out a list of various elements. See the third constructor 
+section below.
+
+Third Constructor: void third_constructor_LL()
+To test the print function I implemented the third constructor so that I 
+could use the print function to print out a full list. To implement the 
+third constructor, I first implemented pushAtFront() so that I could use it 
+in the third constructor. Then, I tested it by using it to create a linked 
+list of multiple elements and then printing out the list with the print() 
+function. This allowed me to further test my print() function. This test 
+compiled successfully and the list printed our correctly.
+
+Size(): void size_LL()
+Next, I completed the size() function. This only required one line of code 
+to return the value of numElements, the private member variable I defined to 
+account for the number of elements in the list. To test this function, I 
+created a function in unit_tests.h that initializes three lists, one with 
+the default constructor, one with the second constructor, and another with
+the third constructor, and then uses size() and assert() to check the sizes.
+The tests compiled successfully and passed, showing me that my size() 
+function was working correctly.
+
+isEmpty(): void isEmpty_LL()
+With my size() function implemented, I was then able to easily implement my
+isEmpty() function, because a list is empty when its size is 0. I tested 
+isEmpty() by creating empty lists and non-empty lists and then using assert()
+to see if isEmpty() returns true for empty lists and false for non-empty 
+lists. The tests compiled successfully and passed, showing me that my 
+isEmpty() function was working correctly.
+
+elementAt(): void elementAt_LL(), void FAIL_elementAt_LL()
+Next, I implemented the elementAt() function. To test this function, I
+created a list of multiple characters and used assert() to make sure 
+elementAt() was returning the correct characters at different positions in
+the list. These tests compiled successfully and passed. I then tested to make
+sure that the function correctly printed out error messages when given an 
+invalid index. I did this by creating an array and then passing in an 
+index that was not between [0, size). The error messages tests compiled
+successfully and the correct error messages were printed out. This showed 
+me that my elementAt() function was working correctly. Later, I also tested
+it on one element lists. These tests also passed.
+
+first() and last(): void first_last_LL(), void FAIL_first_LL(),
+void FAIL_last_LL()
+Implementing the first() and last() functions was very simple with the
+elementAt() function already implemented. I simply needed to write error 
+messages for empty lists and then use elementAt() to access either the 
+first element or the last element. To test first() and last(), I created
+lists and used assert() to make sure first() and last() were getting the 
+correct elements. These tests compiled successfully and passed. I then 
+tested the error messages by calling first() and last() on empty lists.
+These tests compiled successfully and printed the correct error messages. 
+This showed me that my first() and last() functions were working correctly.
+
+clear(): void clear_LL()
+Next, I implemented clear() and tested it on three different lists created 
+from the three different constructors. The tests were successful, as all
+three lists were confirmed to be empty by the isEmpty() function and 
+assert() function; however, my program kept failing valgrind. To fix this
+issue, I noticed that I had been writing "Node *curr = new Node;". 
+Declaring curr as a new Node is unnecessary when a few lines later I am 
+just setting it equal to front. After deleting the new Node part so it just 
+said "Node *curr;," my program stopped failing valgrind.
+
+pushAtBack() and pushAtFront(): void pushAtBack_LL(), void pushAtFront_LL()
+I next implemented the pushAtBack() and pushAtFront functions. To test them,
+I used the first() and last() functions, the assert() function, print()
+function, and the size() function. I made sure to address all possible cases
+like I did while testing the pushAtBack() and pushAtFront() functions for the
+array list data structure (e.g.  insertion into an empty list, insertion into
+a 1-element list, insertion in the middle of a larger list, insertion at the
+front of a larger list, insertion at the back of a larger list). The tests
+passed.
+
+insertAt(): void insertAt_LL(), void FAIL1_insertAt_LL(),
+void FAIL2_insertAt_LL()
+I next created and tested the insertAt() function. I created three linked
+lists each with one of the three constructors (one empty list, one list with
+one character, and one list with multiple characters). I then ran the
+insertAt() function to add characters to the lists. I checked that the
+addition was successful using the assert() function, the size() function,
+and the print() function. These tests were successful. In my test, I also made
+sure to address all possible cases like I did while testing the pushAtBack()
+and pushAtFront() functions (e.g.  insertion into an empty list, insertion
+into a 1-element list, insertion in the middle of a larger list, insertion
+at the front of a larger list, insertion at the back of a larger list). I
+also added tests to make sure the function correctly failed and printed
+error messages when given invalid indices. These tests were also successful.
+Later, I learned that there was a problem with my insertAt() function that 
+was not being picked up in tests. This problem was that I was not setting 
+the previous pointer of the Node in front of the newly inserted one. This
+problem was not being picked up in tests because the inserted characters 
+were still being placed in the correct spots and the new lists were 
+still being printed out correctly because the print() function loops 
+through the list from front to back (so it only accesses the next pointers).
+I fixed this problem and made sure to set my back pointers. The tests 
+were still successful after making these changes.
+
+copy constructor and assignment operator: void copy_constructor_LL(),
+void assignment_operator_LL()
+Next, I implemented the copy constructor and assignment operator. This
+implementation was very simple because the code was exactly the same as
+that of the array list (which was provided to us). Because this code was
+provided to us, testing it was not that necessary. The only reason to test 
+these functions was to ensure that the member functions I wrote, which are
+part of the implementations of the copy constructor and assignment operator,
+were functioning correctly. So, I tested these two functions on various types
+of lists and found that the tests were successful.
+
+removeAt(), popFromBack(), popFromFront(): void remove_pop_LL()
+Because I implemented these three functions together, I decided to test 
+them together. Testing these functions and getting them to function correctly,
+was by far the most difficult task for me during this assignment. When I began
+testing, I noticed that the functions kept failing valgrind. I started by 
+fixing pushAtFront() (when removeAt() is called on the first element in
+the linked list). I realized that I was did not have a delete in the 
+function to delete the Node that was removed from the list. When I fixed
+this, removeAt() stopped failing valgrind when called on the first element.
+Next, I started testing on a large list with a lot of elements. My
+elementAt() tests kept failing for certain parts of the list so I decided 
+that I needed to print the list. However, when I tried to print after 
+all of the remove operations, I got a huge error message. So, I tested
+printing out the list after single calls of the remove() function to see 
+which one was causing the problems. I found that the problem was occuring 
+during the fourth remove operation on an element in the middle of the list.
+This did not make sense to me. I decided to go back one operation and make 
+sure the statement that printed out then was correct. I noticed that it
+was not, and for some reason, it seemed like a random letter had been
+inserted into the list. I was confused so I decided to draw a picture. 
+From drawing things out and thinking about the problem, I realized that 
+I had made a very simple mistake in the for loop. When setting a Node I
+called "behind" equal to the Node right before the one looping through 
+the list, I accidentally put - 
+curr->prev = behind;
+as opposed to - 
+behind = curr->prev;
+Also, after the for loop, instead of setting behind equal to curr->next 
+(the Node right after the Node to be deleted), I was setting it to curr.
+After fixing these mistakes, the tests were successful. Next, I created 
+tests to check the error messages. These were also successful, as they 
+printed the correct error messages.
+
+concatenate(): void concatenate_LL()
+I tested the concatenate() function with various types of lists (including
+empty lists) and made sure the list combinations were successful using
+size(), elementAt(), and print(). The tests were successful.
+
+replaceAt(): void replaceAt_LL(), void FAIL_replaceAt_LL()
+Lastly, I implemented replaceAt() and tested it by creating a list and
+using replaceAt() to replace its characters. I made sure the replaces 
+were successful by using the elementAt() function. I also tested the 
+error message on this function, which printed out successfully.
+
+                         ---- TIME SPENT ----
+5 hours on 9/18
+3.5 hours on 9/19
+2 hours on 9/20
+3.5 hours on 9/23
+6 hours on 9/24
+9 hours on 9/25
+2 hours on 9/26
+
+31 hours total.
+        
