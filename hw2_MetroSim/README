@@ -1,0 +1,1037 @@
+/**********************************************************
+* HW2: Metro Simulator
+* Comp 15
+* README
+* Edited by: Kirin Godhwani, 10/3/21
+*********************************************************/
+
+Compile/run:
+     - Compile using
+            make MetroSim
+     - run executable with
+            ./MetroSim StationsFile passFile [commands]
+
+
+Program Purpose:
+
+This homework assignment simulates a running train to accommodate
+Passengers arriving/departing a metro.  Learn how to design and
+modularize code and work with documented libraries.
+
+This program simulates a running train to accommodate Passengers
+arriving/departing a metro to and from a series of stations based on a set of
+given commands.
+
+
+Acknowledgements: I presented my design plan to a TA named Roger who helped me
+think through my plan, make my plan more specific, consider edge cases, and
+create a weekly workflow to follow to get the project done in time. While 
+working through the project, I went to office hours on 10/3, 10/4, and 10/5
+and received help from Sean R., Kiran multiple times, and CR_Calabrese (File 
+I/O help). For File I/O help and as a reference for creating queues, I used
+the lecture slides on File I/O and on queues. Moreover, for reference while
+using vectors, I used the information from the following link which was
+posted in Piazza: https://en.cppreference.com/w/cpp/container/vector
+
+Files: 
+
+main.cpp:
+     This file is short and handles simple driver functions such as reading
+     in files from the command line and outputting to output files. This file
+     also calls the public command loop in the MetroSim interface that uses 
+     the MetroSim interface to imitate the green line.
+
+MetroSim.cpp:
+     This file handles the main functionality of running the Metro Simulation.
+     The file implements functions that handle the addition of new Passengers
+     to the train line, the addition of new Stations to the train line, 
+     the moving of trains from one stop to the next with Passengers going
+     on/off the train, and it implements the command loop function that uses
+     the MetroSim interface to simulate the green line. Implements certain
+     helper functions for the command loop.
+
+MetroSim.h:
+     The implementation of the MetroSim interface. Creates the train 
+     (vector of PassengerQueue objects) and the vector of Stations (Station
+     structs), and handles the public member functions used in the command loop
+     (i.e. moving to the next stop, printing the state of the simulation). Also
+     defines the Station struct which holds the information for each station
+     (a queue of passengers waiting to board the train, the name of the
+     station) and provides the function to add Stations to the train line.
+     Both the train and the list of stations are implemented using vectors. 
+     Also defines the command loop that is called in main.cpp to simulate the
+     green line. Defines certain helper functions for the command loop.
+
+stations.txt:
+     An example file containing a list of Stations.
+
+test_commands.txt:
+     Sample list of commands that you could give to the simulator.
+
+the_metroSim:
+     Reference implementation for students to see how the Metro Simulation 
+     functions.
+     
+PassengerQueue.h
+     The implementation of the PassengerQueue interface. Upon boarding
+     the train, Passengers are assigned to a PassengerQueue vector list based
+     on their destination. The train is represented by a list of
+     PassengerQueue objects where each PassengerQueue represents a train
+     station. The PassengerQueue class provides multiple public member
+     functions that can be used to access members in the queue, remove members
+     from the queue, and add members to the queue. 
+
+PassengerQueue.cpp
+     Allows for passenger access at the front of the queue, passenger removal
+     at the front of the queue, passenger insertion at the end of the queue,
+     returning the size of the queue, and printing the queue.
+
+Passenger.h
+     The implementation of the Passenger interface. Defines the Passenger
+     struct which consists of an id, an arrival station, and a departure
+     station. Defines and implements a default constructor and second
+     constructor to declare Passengers. The second constructor allows for the 
+     declaration of Passenger with a specific id, arrival station, and
+     departure station. Also includes a public print function to print out the
+     details of a Passenger.
+
+Passenger.cpp
+     Implements the public print function of the Passenger interface.
+
+output.txt
+     The output file I used to output exiting Passengers from my program.
+     I used diff to compare it with outputDemo.txt.
+
+outputDemo.txt
+     The output file I used to output exiting Passengers from the demo
+     program. I used diff to compare it with the output of my own program.
+     
+stdout_personal.txt
+     The file I used to hold the output that my program sends to std::cout.
+     I used diff to compare this with that of the demo program.
+     
+stdout_demo.txt
+     The file I used to hold the output that the demo sends to std::cout. I
+     used diff to compare this with what my own program sent to std::cout.
+     
+test.txt
+     A file containing a list of commands that does not end with "m f".
+     Used to test the condition in my command loop to end the loop at the
+     first empty line.
+
+twoStations.txt
+     A testing file containing a list of just two stations.
+     
+twoCommands.txt
+     A set of commands to be used while testing the sim on file containing 
+     two stations.
+     
+Makefile
+     The Makefile to compile the program, add the rule for unit test,
+     include a clean command, and also allow for quick submission of all of
+     the necessary files.
+
+README
+     The README file for this homework assignment. Contains compile/run
+     instructions, the program's purpose, descriptions of the submitted
+     files, commentary on the data structures used in the assignment, an
+     explanation of the performed testing, an explanation for the most
+     difficult part of the assignment, and the amount of time spent on the
+     assignment.
+
+Data Structures:
+
+    Vectors:
+    To create the train, the list of Stations, and the PassengerQueues, I used
+    C++'s built-in vector library. The vector library in C++ encapsulates 
+    dynamic size arrays (arrays that can change in size), so vectors act
+    pretty much the same as array lists. The main reason for using vectors 
+    as opposed to an implementation of an array list interface is that 
+    the vector library we know works perfectly while the array list interface
+    is something we wrote ourselves and tested. We know that there are 
+    absolutely no edge cases missed in the vector library while there may 
+    be mistakes in our own array list implementations. Moreover, using
+    vectors is far more convenient and easy to do since all of the
+    important array list functions are built into its library. To use
+    vectors, we simply have to #include <vector>. To use array lists,
+    however, we would need to copy over all our files
+    from HW1 to metrosim. Like array lists, the main advantages of vectors 
+    are that they are able to change in size unlike normal C++ arrays.
+    Vectors also provide instant access to any element using its index
+    because elements are stored contiguously in memory. Vectors, though,
+    share many of the disadvantages of Array Lists. Expansion and reallocation
+    of vector elements may occasionally have to occur when new elements are
+    added. With vectors, though, expansion and contraction are handled
+    automatically. Vectors usually occupy more space than static arrays,
+    because more memory is allocated to handle future growth so that
+    expansion and reallocation do not need to happen too much: only when
+    the additional memory is exhausted. Allocating this extra memory
+    is space inefficient because it makes it so that many spots in the
+    vector are unused. Like with array lists, inserting new elements and
+    removing old elements near the front of the vector is very expensive
+    because it requires reallocations. In the future, I will always use
+    vectors as opposed to array lists because they are far more convenient
+    to use.
+    
+    Queues: During the assignment, I used the vector library to create the
+    queues that held the different Passengers. These queues were called 
+    PassengerQueues. The train was made of a list of PassengerQueues where
+    each PassengerQueue in the list represented a different departure station
+    for Passengers. The list of Stations also involved a PassengerQueue at
+    each station that held the Passengers waiting to get on the train. Like
+    all queues, the PassengerQueues act like a line where people are added
+    to the line on one side and removed on the other (first in, first out).
+    To achieve this, queues are pretty much just a restricted version of
+    a list with a far more restricted set of member functions. For this 
+    assignment, the only member functions included in the queue were enqueue,
+    dequeue, print, size, and front. Because queues are just restricted 
+    version of lists, I implemented PassengerQueue using the vector library
+    and its built-in functions. If speed were a concern, though, I would
+    have had to use a linked list with a back pointer because pushAtBack and
+    popFromFront for linked lists are both O(1) while popFromFront for 
+    array lists (vectors) is O(n). The restriction of queues is a major
+    benefit because humans are very error prone and as programs grow and get
+    more complex, having restrictions is very valuable. This is an example of
+    an abstraction barrier because giving someone the full functionality of a
+    list which would be excessive, unnecessary, and too powerful for many
+    cases, so we give them a queue and its restricted interface. A queue would
+    be used for operations that require this first in, first out style. 
+    In other cases, other restricted interfaces may be required such a stack
+    that is last in, first out. We used queues for the PassengerQueue
+    interface because we were looking for the first in/first out functionality.
+    The spec required that the first Passengers to the stations are the
+    first to board the train and the first Passengers to board the train 
+    are the first to get out at their departing stations.
+    To explain this more in depth, when new Passengers are added to the 
+    train stations, the first Passengers added start at the front of
+    the queue. When the train arrives at each station, the Passengers at the
+    front of the queue get on the train first. Upon getting on the train,
+    Passengers are organized into new PassengerQueues that correspond with 
+    the different departing stations. The first Passengers onto the train
+    are put at the front of their departing station PassengerQueue. Then, 
+    when the train arrives at each departing station, the Passengers at
+    the front of the corresponding departing station queue exit the train 
+    first - out of those getting off at the departing station, the Passengers
+    that got on the train first exit first. As you can see this first in/first
+    out functionality is required throughout the sim. For this reason, queues
+    were necessary for this assignment.
+
+Testing:
+
+Here describe the following: process of testing (unit tests), mention
+of bugs you encountered while testing, mention of testing on inputs of
+different sizes and edge cases, good description of base cases you
+considered while testing. Demonstrate a methodical approach to
+testing.  This section of your REAMDE should be very thorough for
+homework assignments.
+
+              PassengerQueue.h, PassengerQueue.cpp, Passenger.cpp
+                
+The first code I wrote for this assignment was the implementation of the 
+PassengerQueue class. I created the header file and then implemented all of
+the functions on the .cpp file. Also, while writing the print() function 
+for the PassengerQueue class, I implemented the print() function for the 
+Passenger interface. After finishing all of these functions, I created 
+a test in unit_test that would test all of the functions in the PassengerQueue
+class. Moreover, because the print() function in the PassengerQueue class 
+used the print() function implemented in the Passenger interface, the tests
+I wrote also tested the print() function of the Passenger interface. 
+The test I created first defined a series of Passengers and then used the
+PassengerQueue class's functions to add Passengers to the end of the queue,
+access the Passenger at the front the queue, removing Passengers from the
+front of the queue, and print the queue. I tested the success of these
+functions with size(), assert(), and print(). To test print(), I looked at
+the output in terminal. Before running the test, I had to edit the Makefile.
+When I finished editing it and ran make MetroSim, various error messages 
+popped up that had to do with me not including the #include lines on the 
+top of some of the files. After fixing this, I ran make again and my code 
+compiled without any error messages. However, when I ran unit_test, some 
+error messages popped up. The error messages were pointing out problems 
+with certain assert commands where I was comparing the output of the 
+front() function to another Passenger:
+
+assert(q.front() == p1);
+
+The error message said: "error: invalid operands to binary expression
+('Passenger' and 'Passenger')." At first, I was very confused about this 
+error because it claimed there was a problem with me comparing two objects of
+the same type. Then, I thought back to my tests with assert for hw1. While
+testing my first(), last(), and elementAt() functions with assert, I always
+compared the character part of each element or Node with another character.
+I was never doing comparisons with entire elements of the array list or 
+entire Nodes in the linked list; I was always using first(), last(), or 
+elementAt() to return just the character part of the piece of data and then
+comparing it with another character. This showed me that I cannot compare 
+the entire front Passenger with another Passenger. I changed my assert 
+commands for the front() function to:
+
+assert(q.front().id == p1.id and q.front().from == p1.from);
+
+After making this change, my test compiled successfully and passed. It also 
+passed valgrind. Later, to make my unit tests less confusing, I decided to
+add specific tests for some of the individual functions (dequeue, enqueue) 
+so that all of my tests weren't jumbled together into one. This would
+make my tests easier to understand and I know it is preferred that individual
+functions are tested in their own tests. I did not delete, though, my large
+testing function because I feel it shows my interface working together 
+as a whole. These new tests were successful as well.
+
+
+    MetroSim.h, MetroSim.cpp, Reading Station File, Printing to Output File
+
+Next, I implemented the MetroSim interface. I created the header file first 
+and then implemented all of the functions on the .cpp file. I understood 
+that it would be difficult to test this interface with unit_test so I
+decided I needed to create a version of the command loop. I decided to make 
+the command loop that took commands as input from cin. I first wrote the 
+code to read-in Station names from a file on the command line. Then, I 
+created the command loop based on the commands explained in the lab spec. 
+I then edited my Makefile to include the MetroSim interface. When I first 
+ran make MetroSim, various errors popped up explaining that I need to be 
+using std::string as opposed to just string. After fixing these errors, 
+I also had to fix a few syntax errors in MetroSim.cpp and main.cpp. I also
+received some more major errors with how I was opening and writing to the
+output file in main.cpp. I had forgotten to deal with opening the file in 
+the first place and instead was just telling my program to print output to
+argv[2]. After fixing this section of the code by referencing the code I 
+wrote to open the file containing Station names, I re-ran make MetroSim 
+and my code compiled without any errors and warnings. I then ran the command 
+loop I had created. Here is my initial command loop:
+
+/* run_cin_command_loop
+ *    Purpose: Runs a command loop to interact with MetroSim with cin when a 
+ *             command file is not given.
+ * Parameters: An instance of MetroSim.
+ *    Returns: None.
+ *       Note: A different command loop runs when a command file is provided
+ *       Note: I used this command loop to first test my MetroSim 
+ *             implementation.
+ */
+void run_cin_command_loop(MetroSim sim, std::ostream &output)
+{
+    std::string cmd, move_finish;
+    int user_arrival, user_departure;
+    do {
+        std::cout << "Command? ";
+        cin >> cmd;
+        // p ARRIVAL DEPARTURE
+        if (cmd == "p") {
+            cin >> user_arrival >> user_departure;
+            sim.addPassenger(user_arrival, user_departure);
+            sim.print(std::cout);
+        // m m (metro move) or m f (metro finish)
+        } else if (cmd == "m") {
+            cin >> move_finish;
+            if (move_finish == "m") {
+                sim.NextStop(output);
+                sim.print(std::cout);
+            }
+            if (move_finish == "f") {
+                sim.print(std::cout);
+                cmd = "end";
+            }
+        }
+    } while (cmd != "end");
+}
+
+When I first ran the command loop, I received the following error message 
+when I ran the "m m" command: 
+
+terminate called after throwing an instance of 'std::out_of_range'
+what():  vector::_M_range_check: __n (which is 0) >= this->size() (which is 0)
+Abort (core dumped)
+
+At first, I thought that the problem was that I was not updating the size 
+of my train vector of PassengerQueue instances and was then adding Passengers
+to specific indices in the vector. I added the following two lines in my
+function that creates new Stations to fix this: 
+
+PassengerQueue pq;
+train.push_back(pq);
+
+After creating these lines and inserting a print statement for the size of 
+the train vector, I found that my program was correctly setting the size 
+of the train vector to the number of Stations. However, I still received 
+the same error message when using the "m m" command. I also noticed that
+the the list of Stations was not printing out. I added std::cout statements
+inside this print function to find the error. The problem I found is that
+the size of my vector containing the Stations was not updating when new
+Stations were being added, so the program thought that the size was 0 and was
+thus not printing any Stations. When I checked my newStation function, though,
+the size was correctly updating. I decided to add a parameter to my print
+function that contained the instance of MetroSim to be printed. Then, 
+whenever I called my NumStations() function (returns the size of the Station
+list), I instead called sim.NumStations() (sim = the instance of MetroSim).
+This did not work. After this failed, I did not know what do do next, so I
+went to office hours and explained my problem to a TA named Kiran. We went
+through my code and ran tests by printing different things to std::cout and 
+changing small things in the code to try to fix the problem. Eventually, we
+found that the problem was in main.cpp. In main.cpp, I was passing around 
+an instance of MetroSim between functions; however, I was doing this without
+using a pointer to the instance of the class. This made it so that I was
+doing a shallow copy and not successfully updating the class. When I changed
+my code so that I was passing around addresses to the instance of MetroSim,
+my problem was solved. By making this change, I was taking a deeper copy of
+the instance of the class. Here is my updated command loop that allowed me to
+test my MetroSim interface: 
+
+/* run_cin_command_loop
+ *    Purpose: Runs a command loop to interact with MetroSim with cin when a 
+ *             command file is not given.
+ * Parameters: An instance of MetroSim.
+ *    Returns: None.
+ *       Note: A different command loop runs when a command file is provided
+ *       Note: I used this command loop to first test my MetroSim 
+ *             implementation.
+ */
+void run_cin_command_loop(MetroSim *sim, std::ostream &output)
+{
+    std::string cmd, move_finish;
+    int user_arrival, user_departure;
+    do {
+        std::cout << "Command? ";
+        cin >> cmd;
+        // p ARRIVAL DEPARTURE
+        if (cmd == "p") {
+            cin >> user_arrival >> user_departure;
+            sim->addPassenger(user_arrival, user_departure);
+            sim->print(std::cout);
+        // m m (metro move) or m f (metro finish)
+        } else if (cmd == "m") {
+            cin >> move_finish;
+            if (move_finish == "m") {
+                sim->NextStop(output);
+                sim->print(std::cout);
+            }
+            if (move_finish == "f") {
+                sim->print(std::cout);
+                cmd = "end";
+            }
+        }
+    } while (cmd != "end");
+}
+
+When I ran this command loop, the first problem I encountered is that my
+print function was printing the train in the wrong location. I fixed this
+by using the following code to print the train: 
+
+if (currStation == Stations.at(i).StationNum) {
+    output << "TRAIN: ";
+    
+Next, I tested the "p ARRIVAL DEPARTURE" command. I ran this command over and
+over again and it was successful each and every time (according to print()).
+Next, I tested "m m." Initially, this command was not working. When I added
+std::cout statements to the function, the size() values were printing in
+correctly and they were being printed as if they were empty. I realized,
+that in my code, I was accessing Stations on the opposite side of the train 
+line then I wanted. This problem stemmed from the fact that I forgot that
+I had established PassengerQueues as having the nearest Stations and first-
+added Passengers at the back of the vector, and the farthest Station and
+latest added Passengers at the front of the vector. When I changed my code
+so that I was accessing the Station at the correct index, the "m m" command 
+was functioning correctly. Here is how I fixed the index:
+
+I changed it from: int StationIndex = currStation - 1;
+
+to: int StationIndex = NumStations() - currStation;
+
+This reversed the Stations so that I was accessing the nearest Stations which
+I had placed at the back of the vector. To make sure the "m m" command was 
+correctly printing the exiting Passengers to the output file, I downloaded
+the output file and checked the printed text. I noticed that I had forgotten
+to flip the Stations for this print section because it was showing 
+Passengers had gotten off on the Stations exactly opposite to the ones where
+they actually got off on the train line. When I fixed the Station index, 
+the output ran correctly. To finish, I decided to test with a large set of
+commands and the Station.txt and output.txt files. Here are the Passengers 
+I added at the start of the sim:
+p 1 2
+p 1 3
+p 1 7
+p 1 9
+p 2 3
+p 2 2
+p 3 19
+p 3 2
+p 3 5
+p 4 5
+p 4 16
+p 6 26
+p 8 19
+p 10 5
+p 11 3
+p 11 20
+p 11 12
+p 12 13
+p 12 17
+p 13 7
+p 14 16
+p 14 25
+p 15 20
+p 16 1
+p 17 19
+p 18 20
+p 18 18
+p 18 22
+p 19 21
+p 20 21
+p 21 24
+p 23 26
+p 25 26
+p 26 1
+p 26 3
+p 26 25
+
+Here's the initial state of the sim: 
+
+Passengers on the train: {}
+TRAIN: [1] Heath St {[1, 1->2][2, 1->3][3, 1->7][4, 1->9]}
+       [2] Back of the Hill {[5, 2->3][6, 2->2]}
+       [3] Riverway {[7, 3->19][8, 3->2][9, 3->5]}
+       [4] Mission Park {[10, 4->5][11, 4->16]}
+       [5] Fenwood Rd {}
+       [6] Brigham Circle {[12, 6->26]}
+       [7] Longwood Medical {}
+       [8] Museum of Fine Arts {[13, 8->19]}
+       [9] Northeastern {}
+       [10] Symphony {[14, 10->5]}
+       [11] Prudential {[15, 11->3][16, 11->20][17, 11->12]}
+       [12] Copley {[18, 12->13][19, 12->17]}
+       [13] Arlington {[20, 13->7]}
+       [14] Boylston {[21, 14->16][22, 14->25]}
+       [15] Park St {[23, 15->20]}
+       [16] Government Center {[24, 16->1]}
+       [17] Haymarket {[25, 17->19]}
+       [18] North Station {[26, 18->20][27, 18->18][28, 18->22]}
+       [19] Science Park {[29, 19->21]}
+       [20] Lechmere {[30, 20->21]}
+       [21] Union Square {[31, 21->24]}
+       [22] East Somerville {}
+       [23] Gilman Square {[32, 23->26]}
+       [24] Magoun Square {}
+       [25] Ball Square {[33, 25->26]}
+       [26] College Ave {[34, 26->1][35, 26->3][36, 26->25]}
+       
+I then ran the train until it reached Station 14 for the second time. Here's
+the train at Station 14 for the first time:
+
+Passengers on the train: {[6, 2->2][8, 3->2][5, 2->3][15, 11->3][10, 4->5]
+[14, 10->5][20, 13->7][11, 4->16][19, 12->17][7, 3->19][13, 8->19][16, 11->20]
+[12, 6->26]}
+       [1] Heath St {}
+       [2] Back of the Hill {}
+       [3] Riverway {}
+       [4] Mission Park {}
+       [5] Fenwood Rd {}
+       [6] Brigham Circle {}
+       [7] Longwood Medical {}
+       [8] Museum of Fine Arts {}
+       [9] Northeastern {}
+       [10] Symphony {}
+       [11] Prudential {}
+       [12] Copley {}
+       [13] Arlington {}
+TRAIN: [14] Boylston {[21, 14->16][22, 14->25]}
+       [15] Park St {[23, 15->20]}
+       [16] Government Center {[24, 16->1]}
+       [17] Haymarket {[25, 17->19]}
+       [18] North Station {[26, 18->20][27, 18->18][28, 18->22]}
+       [19] Science Park {[29, 19->21]}
+       [20] Lechmere {[30, 20->21]}
+       [21] Union Square {[31, 21->24]}
+       [22] East Somerville {}
+       [23] Gilman Square {[32, 23->26]}
+       [24] Magoun Square {}
+       [25] Ball Square {[33, 25->26]}
+       [26] College Ave {[34, 26->1][35, 26->3][36, 26->25]}
+       
+When the train reached back at Station 15, I noticed a problem. Here is the 
+state of the simulation at this point:
+
+Passengers on the train: {[34, 26->1][8, 3->2][35, 26->3][14, 10->5]
+[21, 14->16][27, 18->18][25, 17->19][26, 18->20][30, 20->21][36, 26->25]
+[33, 25->26]}
+       [1] Heath St {}
+       [2] Back of the Hill {}
+       [3] Riverway {}
+       [4] Mission Park {}
+       [5] Fenwood Rd {}
+       [6] Brigham Circle {}
+       [7] Longwood Medical {}
+       [8] Museum of Fine Arts {}
+       [9] Northeastern {}
+       [10] Symphony {}
+       [11] Prudential {}
+       [12] Copley {}
+       [13] Arlington {}
+       [14] Boylston {}
+TRAIN: [15] Park St {}
+       [16] Government Center {}
+       [17] Haymarket {}
+       [18] North Station {}
+       [19] Science Park {}
+       [20] Lechmere {}
+       [21] Union Square {}
+       [22] East Somerville {}
+       [23] Gilman Square {}
+       [24] Magoun Square {}
+       [25] Ball Square {}
+       [26] College Ave {}
+
+When the train returned to Station 1 and started its trek back through the
+line of Stations, none of the Passengers set to get off on the second loop
+through the train line got off the train. For example, in the above simulation,
+Passenger number 34 got on the train at Station 26 and was set to get off at
+Station 1; however, as we can see above, the Passenger is still on the train
+at Station 15. In my header file for MetroSim, I added an integer variable
+that I set to the Station number of the Station the train is at. I decided to
+run the command loop again with no Passengers, travel through the train line
+back to the first stop, and print the value of this integer variable at each
+move from one Station to the next. When I did this and examined the number
+that printed out for the current Station after each move, I noticed that 
+when the train reached Station 1 again, the value was not equal to 1. This 
+explained why the train was not letting off Passengers with a departure of
+Station 1. I added the following if else statement to ensure the value of
+the current Station is always right (even after returning to Station 1): 
+
+// If the train was at the last stop, move it to the first stop
+if (currStation == NumStations()) {
+    currStation = 1;  
+// else, train moves to the next stop 
+} else {
+    currStation++;
+} 
+
+After adding this, I tested the command loop with a single Passenger with
+arrival at Station 1 and departure at Station 1. I then had the train travel
+back to Station 1 and I checked to make sure the Passenger departed. I found
+that the Passenger correctly got off. So, I decided to re-run my larger
+test that failed prior.
+
+At the first stop at Station 14, the state of simulation was correct and 
+the same as it was during my first test When it returned to Station 1, 
+though, just like my first test, the simulation was incorrect. I found that
+out of the group of Passengers I had departing at Station 1, only a few of
+them got off while the rest stayed on the train. I realized that their had
+to be a problem with my code that arose when a larger group of Passengers 
+had to be moved off at the same Station. Here is the code I had written to
+dequeue departinhg Passengers:
+
+for (int i = 0; i < train.at(currStation - 1).size(); i++) {
+    output << "Passenger " << train.at(currStation - 1).front().id
+           << " left train at station " << 
+              Stations.at(stationIndex).StationName << "\n";
+    
+    train.at(currStation - 1).dequeue();
+}    
+
+Adding std::cout statements to this function, I found that though the size()
+of the train PassengerQueue for departing Passengers was correct at the
+beginning of the loop, the loop was running less times than this size value.
+I realized that this size() value was decreasing each time I ran dequeue()
+in the loop. As a result, the loop was not running the full amount of times
+for the initial size value. I changed the loop to this so that the train 
+PassengerQueue's updating size did not affect the amount of time the loop ran:
+
+int numDepartingPass = train.at(currStation - 1).size();
+for (int i = 0; i < numDepartingPass; i++) {
+    output << "Passenger " << train.at(currStation - 1).front().id
+           << " left train at station " << 
+              Stations.at(stationIndex).StationName << "\n";
+    
+    train.at(currStation - 1).dequeue();
+}
+
+I then re-ran my large test with the updated code. This time, though, I also
+decided to add even more Passengers to the sim (i.e. the list of Passengers 
+I added above is incomplete, reference the initial state below to see 
+all of the Passengers I initialized). Here is the initial state:
+
+Passengers on the train: {}
+TRAIN: [1] Heath St {[1, 1->2][2, 1->3][3, 1->7][4, 1->9][25, 1->7]}
+       [2] Back of the Hill {[5, 2->3][6, 2->2][23, 2->6]}
+       [3] Riverway {[7, 3->19][8, 3->2][9, 3->5][22, 3->6][24, 3->7]
+[30, 3->8]}
+       [4] Mission Park {[10, 4->5][11, 4->16][26, 4->7]}
+       [5] Fenwood Rd {[21, 5->6][27, 5->8]}
+       [6] Brigham Circle {[12, 6->26]}
+       [7] Longwood Medical {[28, 7->8]}
+       [8] Museum of Fine Arts {[13, 8->19]}
+       [9] Northeastern {[29, 9->8]}
+       [10] Symphony {[14, 10->5]}
+       [11] Prudential {[15, 11->3][16, 11->20]}
+       [12] Copley {[17, 12->1][18, 12->3][19, 12->4][20, 12->5]}
+       [13] Arlington {[31, 13->7][32, 13->8][33, 13->14][39, 13->16]}
+       [14] Boylston {[34, 14->15][35, 14->16][36, 14->25]}
+       [15] Park St {[37, 15->20][38, 15->16]}
+       [16] Government Center {[40, 16->1][41, 16->17][42, 16->18][43, 16->10]
+[44, 16->19]}
+       [17] Haymarket {[45, 17->19][47, 17->20]}
+       [18] North Station {[46, 18->20][48, 18->18][49, 18->22]}
+       [19] Science Park {[50, 19->21]}
+       [20] Lechmere {[51, 20->21]}
+       [21] Union Square {[52, 21->24][53, 21->23]}
+       [22] East Somerville {[54, 22->26][55, 22->23]}
+       [23] Gilman Square {[56, 23->26]}
+       [24] Magoun Square {[57, 24->25][58, 24->26][59, 24->1]}
+       [25] Ball Square {[60, 25->26][61, 25->2]}
+       [26] College Ave {[62, 26->1][63, 26->3][64, 26->25]}
+       
+At Station 14, the tests looked successful:
+
+Passengers on the train: {[17, 12->1][6, 2->2][8, 3->2][15, 11->3][18, 12->3]
+[19, 12->4][14, 10->5][20, 12->5][31, 13->7][29, 9->8][32, 13->8][11, 4->16]
+[39, 13->16][7, 3->19][13, 8->19][16, 11->20][12, 6->26]}
+       [1] Heath St {}
+       [2] Back of the Hill {}
+       [3] Riverway {}
+       [4] Mission Park {}
+       [5] Fenwood Rd {}
+       [6] Brigham Circle {}
+       [7] Longwood Medical {}
+       [8] Museum of Fine Arts {}
+       [9] Northeastern {}
+       [10] Symphony {}
+       [11] Prudential {}
+       [12] Copley {}
+       [13] Arlington {}
+TRAIN: [14] Boylston {[34, 14->15][35, 14->16][36, 14->25]}
+       [15] Park St {[37, 15->20][38, 15->16]}
+       [16] Government Center {[40, 16->1][41, 16->17][42, 16->18][43, 16->10]
+[44, 16->19]}
+       [17] Haymarket {[45, 17->19][47, 17->20]}
+       [18] North Station {[46, 18->20][48, 18->18][49, 18->22]}
+       [19] Science Park {[50, 19->21]}
+       [20] Lechmere {[51, 20->21]}
+       [21] Union Square {[52, 21->24][53, 21->23]}
+       [22] East Somerville {[54, 22->26][55, 22->23]}
+       [23] Gilman Square {[56, 23->26]}
+       [24] Magoun Square {[57, 24->25][58, 24->26][59, 24->1]}
+       [25] Ball Square {[60, 25->26][61, 25->2]}
+       [26] College Ave {[62, 26->1][63, 26->3][64, 26->25]}
+
+At Station 26 the state of the sim also looked successful:
+
+Passengers on the train: {[17, 12->1][40, 16->1][59, 24->1][6, 2->2][8, 3->2]
+[61, 25->2][15, 11->3][18, 12->3][19, 12->4][14, 10->5][20, 12->5][31, 13->7]
+[29, 9->8][32, 13->8][43, 16->10][48, 18->18]}
+       [1] Heath St {}
+       [2] Back of the Hill {}
+       [3] Riverway {}
+       [4] Mission Park {}
+       [5] Fenwood Rd {}
+       [6] Brigham Circle {}
+       [7] Longwood Medical {}
+       [8] Museum of Fine Arts {}
+       [9] Northeastern {}
+       [10] Symphony {}
+       [11] Prudential {}
+       [12] Copley {}
+       [13] Arlington {}
+       [14] Boylston {}
+       [15] Park St {}
+       [16] Government Center {}
+       [17] Haymarket {}
+       [18] North Station {}
+       [19] Science Park {}
+       [20] Lechmere {}
+       [21] Union Square {}
+       [22] East Somerville {}
+       [23] Gilman Square {}
+       [24] Magoun Square {}
+       [25] Ball Square {}
+TRAIN: [26] College Ave {[62, 26->1][63, 26->3][64, 26->25]}
+
+And, at station 1, it seemed the program was finally working. As you can see
+no Passengers are left with a departure Station of 1:
+
+Passengers on the train: {[6, 2->2][8, 3->2][61, 25->2][15, 11->3][18, 12->3]
+[63, 26->3][19, 12->4][14, 10->5][20, 12->5][31, 13->7][29, 9->8][32, 13->8]
+[43, 16->10][48, 18->18][64, 26->25]}
+TRAIN: [1] Heath St {}
+       [2] Back of the Hill {}
+       [3] Riverway {}
+       [4] Mission Park {}
+       [5] Fenwood Rd {}
+       [6] Brigham Circle {}
+       [7] Longwood Medical {}
+       [8] Museum of Fine Arts {}
+       [9] Northeastern {}
+       [10] Symphony {}
+       [11] Prudential {}
+       [12] Copley {}
+       [13] Arlington {}
+       [14] Boylston {}
+       [15] Park St {}
+       [16] Government Center {}
+       [17] Haymarket {}
+       [18] North Station {}
+       [19] Science Park {}
+       [20] Lechmere {}
+       [21] Union Square {}
+       [22] East Somerville {}
+       [23] Gilman Square {}
+       [24] Magoun Square {}
+       [25] Ball Square {}
+       [26] College Ave {}
+       
+And, as expected by the departure Stations of the Passengers, none were left
+when the train reached Station 26 for the second time.
+
+Passengers on the train: {}
+       [1] Heath St {}
+       [2] Back of the Hill {}
+       [3] Riverway {}
+       [4] Mission Park {}
+       [5] Fenwood Rd {}
+       [6] Brigham Circle {}
+       [7] Longwood Medical {}
+       [8] Museum of Fine Arts {}
+       [9] Northeastern {}
+       [10] Symphony {}
+       [11] Prudential {}
+       [12] Copley {}
+       [13] Arlington {}
+       [14] Boylston {}
+       [15] Park St {}
+       [16] Government Center {}
+       [17] Haymarket {}
+       [18] North Station {}
+       [19] Science Park {}
+       [20] Lechmere {}
+       [21] Union Square {}
+       [22] East Somerville {}
+       [23] Gilman Square {}
+       [24] Magoun Square {}
+       [25] Ball Square {}
+TRAIN: [26] College Ave {}
+
+Lastly, to make sure the exiting Passengers were correctly outputted to the 
+output file, I downloaded the output file and checked its contents. As you 
+can see, the outputs were correct:
+
+Passenger 1 left train at station Back of the Hill
+Passenger 2 left train at station Riverway
+Passenger 5 left train at station Riverway
+Passenger 9 left train at station Fenwood Rd
+Passenger 10 left train at station Fenwood Rd
+Passenger 23 left train at station Brigham Circle
+Passenger 22 left train at station Brigham Circle
+Passenger 21 left train at station Brigham Circle
+Passenger 3 left train at station Longwood Medical
+Passenger 25 left train at station Longwood Medical
+Passenger 24 left train at station Longwood Medical
+Passenger 26 left train at station Longwood Medical
+Passenger 30 left train at station Museum of Fine Arts
+Passenger 27 left train at station Museum of Fine Arts
+Passenger 28 left train at station Museum of Fine Arts
+Passenger 4 left train at station Northeastern
+Passenger 33 left train at station Boylston
+Passenger 34 left train at station Park St
+Passenger 11 left train at station Government Center
+Passenger 39 left train at station Government Center
+Passenger 35 left train at station Government Center
+Passenger 38 left train at station Government Center
+Passenger 41 left train at station Haymarket
+Passenger 42 left train at station North Station
+Passenger 7 left train at station Science Park
+Passenger 13 left train at station Science Park
+Passenger 44 left train at station Science Park
+Passenger 45 left train at station Science Park
+Passenger 16 left train at station Lechmere
+Passenger 37 left train at station Lechmere
+Passenger 47 left train at station Lechmere
+Passenger 46 left train at station Lechmere
+Passenger 50 left train at station Union Square
+Passenger 51 left train at station Union Square
+Passenger 49 left train at station East Somerville
+Passenger 53 left train at station Gilman Square
+Passenger 55 left train at station Gilman Square
+Passenger 52 left train at station Magoun Square
+Passenger 36 left train at station Ball Square
+Passenger 57 left train at station Ball Square
+Passenger 12 left train at station College Ave
+Passenger 54 left train at station College Ave
+Passenger 56 left train at station College Ave
+Passenger 58 left train at station College Ave
+Passenger 60 left train at station College Ave
+Passenger 17 left train at station Heath St
+Passenger 40 left train at station Heath St
+Passenger 59 left train at station Heath St
+Passenger 62 left train at station Heath St
+Passenger 6 left train at station Back of the Hill
+Passenger 8 left train at station Back of the Hill
+Passenger 61 left train at station Back of the Hill
+Passenger 15 left train at station Riverway
+Passenger 18 left train at station Riverway
+Passenger 63 left train at station Riverway
+Passenger 19 left train at station Mission Park
+Passenger 14 left train at station Fenwood Rd
+Passenger 20 left train at station Fenwood Rd
+Passenger 31 left train at station Longwood Medical
+Passenger 29 left train at station Museum of Fine Arts
+Passenger 32 left train at station Museum of Fine Arts
+Passenger 43 left train at station Symphony
+Passenger 48 left train at station North Station
+Passenger 64 left train at station Ball Square
+
+Based on the success of this test, I knew my MetroSim interface was
+functioning correctly. Next I dealt with reading in a command file. I first 
+edited my command loop function so that it had a parameter for the input 
+it took in for the commands (i.e. command file or cin). I then added a 
+condition to the command loop to make it end when it reached the end 
+of a command file. To test that my code was working with the command file and 
+that the MetroSim interface was correctly following the commands, I ran
+the following lines in terminal that make sure my output file is the same
+as the demo's output file and the lines my program prints to terminal are
+the same as the demo: 
+
+./MetroSim stations.txt output.txt test_commands.txt > stdout_personal.txt
+./the_MetroSim stations.txt outputDemo.txt test_commands.txt > stdout_demo.txt
+./MetroSim stations.txt output.txt test_commands.txt > stdout_personal.txt
+./the_MetroSim stations.txt outputDemo.txt test_commands.txt > stdout_demo.txt
+diff output.txt outputDemo.txt
+diff stdout_demo.txt stdout_personal.txt
+
+
+The first time I ran these lines I got one error that I was not printing 
+the initial state of the simulation right after reading in the stations.
+This diff error showed up between stdout_demo.txt and stdout_personal.txt.
+When I added a print statement after reading in the stations and ran 
+these lines again in terminal, no differences were returned. This showed me
+that my code was working correctly. I then decided to add another test to test
+if my command loop worked properly when an "m f" command was not included to
+end the loop. This test would test the condition I had added to end the loop
+when the command file ends. I created a new text file called test.txt with a 
+single command: "m m". I then ran:
+
+./the_MetroSim stations.txt output.txt test.txt > stdout_demo.txt
+./MetroSim stations.txt output.txt test.txt > stdout_personal.txt 
+diff stdout_demo.txt stdout_personal.txt
+
+I found that my command loop ran infinitely and did not stop at the end of
+the file. Looking at my command loop, I realized that I put the condition
+to stop the loop at the end of the file in an else if() statement connected 
+to the conditions for each command. I realized that the program would run 
+through all of these command conditions first and run infinitely before 
+reaching the end of file condition. So, I moved the end of file condition 
+to an if statement at the beginning of the command loop right after taking
+in the command from the input stream. When I made this change and tested
+it with a text file containing eight move commands and no "m f", my code
+was exactly the same as the demo. Here were the lines I ran:
+
+./the_MetroSim stations.txt outputDemo.txt test.txt > stdout_demo.txt
+./MetroSim stations.txt output.txt test.txt > stdout_personal.txt
+diff stdout_demo.txt stdout_personal.txt
+diff output.txt outputDemo.txt
+
+From here, I knew that I had effectively tested the program.
+
+Earlier, I discussed that when I was using my command loop in main.cpp, it
+only worked when I passed in the instance of Metro Sim with pointers. Later,
+I discussed with a TA about what functions I should have in main.cpp. I was 
+told that I should put my command loop in the MetroSim interface because by 
+having the function in main.cpp, I was forced to make all of the member
+functions of MetroSim public. To fix this, I moved the command loop into
+the MetroSim interface, made most of the member functions private, and 
+then changed the parameters because the command loop did not need to take
+in an instance of MetroSim or an address to an instance anymore.
+
+Later, I also tested my program with a Stations file of only two Stations.
+This test was successful.
+
+Right before I submitted I ran:
+./MetroSim twoStations.txt output.txt twoCommands.txt > stdout_personal.txt
+./the_MetroSim twoStations.txt outputDemo.txt twoCommands.txt > stdout_demo.txt
+diff stdout_demo.txt stdout_personal.txt
+diff output.txt outputDemo.txt
+./the_MetroSim stations.txt outputDemo.txt test.txt > stdout_demo.txt
+./MetroSim stations.txt output.txt test.txt > stdout_personal.txt
+diff stdout_demo.txt stdout_personal.txt
+diff output.txt outputDemo.txt
+./MetroSim stations.txt output.txt test_commands.txt > stdout_personal.txt
+./the_MetroSim stations.txt outputDemo.txt test_commands.txt > stdout_demo.txt
+diff stdout_demo.txt stdout_personal.txt
+diff output.txt outputDemo.txt
+make
+make: 'MetroSim' is up to date.
+
+I also tested with the optional PassengerQueue autograder and my program
+passed all 11 tests:
+== Compiling 11 executables ==
+Compiled: 11/11 |██████████| 00:07
+
+== Running 11 tests ==
+Completed: 11/11 |██████████| 00:07
+Passed 11, Failed 0, Timed out 0
+
+        Passed tests: test01 - print() test, test02 - front(), 
+                      test03 - enqueue single element, 
+                      test04 - enqueue multiple elements (20), 
+                      test05 - enqueue many elements (100), 
+                      test06 - dequeue single element, 
+                      test07 - dequeue multiple elements (20), 
+                      test08 - dequeue many elements (100), 
+                      test09 - size() - empty PassengerQueue, 
+                      test10 - size() - Non-empty PassengerQueue, 
+                      test11 - size() - add 50, remove 50, call size on empty
+
+    Valgrind results: Passed: 11 / 11
+
+I also ran a valgrind test with my sim:
+valgrind ./MetroSim stations.txt output.txt test_commands.txt
+
+which returned: 
+
+==8506== 
+==8506== HEAP SUMMARY:
+==8506==     in use at exit: 72,704 bytes in 1 blocks
+==8506==   total heap usage: 85 allocs, 84 frees, 106,951 bytes allocated
+==8506== 
+==8506== LEAK SUMMARY:
+==8506==    definitely lost: 0 bytes in 0 blocks
+==8506==    indirectly lost: 0 bytes in 0 blocks
+==8506==      possibly lost: 0 bytes in 0 blocks
+==8506==    still reachable: 72,704 bytes in 1 blocks
+==8506==         suppressed: 0 bytes in 0 blocks
+==8506== Rerun with --leak-check=full to see details of leaked memory
+==8506== 
+==8506== For counts of detected and suppressed errors, rerun with: -v
+==8506== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 6 from 6)
+
+This meant my program was not failing valgrind.
+
+Note: This homework comes partially implemented, but student must also
+create the driver and add class functionality.
+
+Part that you found most difficult:
+
+Here, indicate the part of the homework that you found the most
+challenging. It could be a concept (ie. stacks) or something specific
+to the homework. This will help us know what to review and what to
+focus on.
+
+The part of the homework I found most difficult was reading the spec and
+understanding the task at hand. It took me a while to soak in the entire
+problem, consider a solution, draw out a plan, and also consider certain
+edge cases. For this homework especially, there were so many different parts
+to the problem that I had to consider: the three different interfaces in 
+Passenger, PassengerQueue, and MetroSim, connecting the interfaces, using 
+the input and output files, and then running a command loop that interacted 
+with the MetroSim interface. It was difficult for me to process all of these
+parts of the problem and then plan out how I would approach each part
+individually. It was definitely very helpful to me to have to create design 
+plans and talk through it with a TA. My TA, Roger, was very helpful
+in pointing out extra things I would need to consider in the plan,
+in posing certain stretch questions to get me thinking, and in giving me 
+recommendations moving forward.
+
+                           ---- TIME SPENT ----
+
+10/2: 2 hours
+10/3: 6.5 hours
+10/4: 5.5 hours
+10/5: 3 hours
+10/8: 2 hours
+
+19 hours total.
